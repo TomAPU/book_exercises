@@ -13,11 +13,40 @@ body {
 .something-meaningful {
     background: #655;
     padding: .8em;
+    width: 20em;
 }
 .something-meaningful > div {
     background: tan;
     border-radius: .8em;
     padding: 1em;
+}
+
+/* via outline */
+div.outline {
+    background: tan;
+    border-radius: .8em;
+    width: 20em;
+    padding: 1em;
+    outline: .6em solid #655;
+}
+
+/* via box-shadow */
+div.boxshadow {
+    background: tan;
+    border-radius: .8em;
+    width: 20em;
+    padding: 1em;
+    box-shadow: 0 0 0 .6em #655;
+}
+
+/* via outline and box-shadow */
+div.combine {
+    background: tan;
+    border-radius: .8em;
+    width: 20em;
+    padding: 1em;
+    box-shadow: 0 0 0 .5em #655;
+    outline: .6em solid #655;
 }
 
 </style>
@@ -30,7 +59,23 @@ body {
     </div>
 </div>
 
-<div style="margin:50px;">&nbsp;</div>
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="outline">
+    via outline
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="boxshadow">
+    via box-shadow
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="combine">
+    via box-shadow and outline
+</div>
 
 </body>
 </html>
