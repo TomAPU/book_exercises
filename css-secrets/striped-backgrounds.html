@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+div.horiz {
+    /* 
+     * If a color stop has a position that is less than the specified
+     * position of any color stop before it in the list,
+     * set its position to be equal to the largest specified
+     * position of any color stop before it.”
+     */
+    /* gradient default direct is `to bottom` */
+    background: linear-gradient(#fb3 50%, #58a 0); /* this actually create a image object */
+    background-size: 100% 30px; /* set background image size */
+
+    width: 20em;
+    height: 100px;
+}
+
+div.horiz2 {
+    /* 
+     * If a color stop has a position that is less than the specified
+     * position of any color stop before it in the list,
+     * set its position to be equal to the largest specified
+     * position of any color stop before it.”
+     */
+    /* gradient default direct is `to bottom` */
+    background: linear-gradient(#fb3 33.3%, #58a 0, #58a 66.6%, yellowgreen 0); /* this actually create a image object */
+    background-size: 100% 45px; /* set background image size */
+
+    width: 20em;
+    height: 150px;
+}
+
+div.vertical {
+    /* 
+     * If a color stop has a position that is less than the specified
+     * position of any color stop before it in the list,
+     * set its position to be equal to the largest specified
+     * position of any color stop before it.”
+     */
+    /* gradient default direct is `to bottom` */
+    background: linear-gradient(to right, /* or 90deg */
+        #fb3 50%, #58a 0); /* this actually create a image object */
+    background-size: 30px 100%; /* set background image size */
+
+    width: 20em;
+    height: 100px;
+}
+
+div.diagonal-wrong {
+    /* 
+     * If a color stop has a position that is less than the specified
+     * position of any color stop before it in the list,
+     * set its position to be equal to the largest specified
+     * position of any color stop before it.”
+     * gradient default direct is `to bottom` */
+    background: linear-gradient(45deg, #fb3 50%, #58a 0); /* this actually create a image object */
+    background-size: 30px 30px; /* set background image size */
+
+    width: 20em;
+    height: 100px;
+}
+
+div.diagonal {
+    /* 
+     * If a color stop has a position that is less than the specified
+     * position of any color stop before it in the list,
+     * set its position to be equal to the largest specified
+     * position of any color stop before it.”
+     * gradient default direct is `to bottom` */
+    background: linear-gradient(45deg,
+        #fb3 25%, #58a 0, #58a 50%,
+        #fb3 0, #fb3 75%, #58a 0); /* this actually create a image object */
+    /*
+     * to get our original stripe width of 15px,
+     * we need to specify a background size of 2 × 15 * sqrt(2) ≈ 42 . 426406871 pixels
+     */
+    background-size: 42px 42px; /* set background image size */
+
+    width: 20em;
+    height: 100px;
+}
+
+div.diagonal-via-repeating {
+    background: repeating-linear-gradient(60deg, #fb3, #fb3 15px, #58a 0, #58a 30px); /* this actually create a image object */
+    width: 20em;
+    height: 100px;
+}
+
+div.diagonal-subtle-brightness {
+    background: #58a;
+    background-image: repeating-linear-gradient(30deg,
+            hsla(0,0%,100%,.1),
+            hsla(0,0%,100%,.1) 15px,
+            transparent 0, transparent 30px);
+
+    width: 20em;
+    height: 100px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="horiz">
+    horizontal stripes
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="horiz2">
+    horizontal stripes2
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="vertical">
+    vertical stripes
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="diagonal-wrong">
+    2 color stops diagonal stripes do not work.
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="diagonal">
+    4 color stops diagonal stripes work.
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="diagonal-via-repeating">
+    diagonal stripes via repeating-linear-gradient
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="diagonal-subtle-brightness">
+stripes of one color and a lighter variant of that
+</div>
+</body>
+</html>
+
