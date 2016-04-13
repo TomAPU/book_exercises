@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+/**
+ * Multiple borders
+ * http://dabblet.com/gist/525eb8e9cdade71723c1
+ */
+
+div.using-box-shadow {
+	width: 100px;
+	height: 60px;
+	margin: 25px;
+	background: yellowgreen;
+	box-shadow: 0 0 0 10px #655,
+            0 0 0 15px deeppink,
+            0 2px 5px 15px rgba(0,0,0,.6);
+}
+
+div.using-outline {
+	width: 100px;
+	height: 60px;
+	margin: 25px;
+    border: 10px solid #655;
+    outline: 15px solid deeppink;
+}
+
+</style>
+</head>
+<body>
+<div class="using-box-shadow">box-shadow</div>
+
+<div style="margin:50px;">&nbsp;</div>
+
+<div class="using-outline">outline</div>
+</body>
+</html>
+

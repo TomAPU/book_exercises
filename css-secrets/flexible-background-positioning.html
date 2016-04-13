@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+/**
+ * Flexible background positioning
+ * via extended background-position
+ * http://dabblet.com/gist/0f226e63595d1bef88cb
+ */
+
+div.d1 {
+	background: url(images/code-pirate.svg)
+	            no-repeat bottom right #58a; /* fallback */
+	background-position: right 20px bottom 10px;
+	
+	/* Styling */
+	max-width: 10em;
+	min-height: 5em;
+	padding: 10px;
+	color: white;
+	font: 100%/1 sans-serif;
+}
+
+/**
+ * Flexible background positioning
+ * via extended background-origin
+ * http://dabblet.com/gist/0f19ac5d28d0aa7b6c60
+ */
+
+div.d2 {
+	background: url(images/code-pirate.svg)
+	            no-repeat bottom right #58a;
+	background-origin: content-box;
+	
+	/* Styling */
+	max-width: 10em;
+	min-height: 5em;
+	padding: 10px;
+	color: white;
+	font: 100%/1 sans-serif;
+}
+
+/**
+ * Flexible background positioning
+ * via calc()
+ */
+
+div.d3 {
+	background: url(images/code-pirate.svg)
+	            no-repeat bottom right #58a;
+    /* Don’t forget to include white-
+    space around any  - and  + oper-
+    ators in  calc() , otherwise it’s a
+    parsing error! The reason for this
+    weird rule is forward compatibility: in
+    the future, keywords might be al-
+    lowed inside  calc() , and they can
+    contain hyphens. */
+	background-position: calc(100% - 20px) calc(100% - 10px);
+	
+	/* Styling */
+	max-width: 10em;
+	min-height: 5em;
+	padding: 10px;
+	color: white;
+	font: 100%/1 sans-serif;
+}
+
+</style>
+</head>
+<body>
+<div class="d1">via extended background-position</div>
+
+<div style="margin:50px;">&nbsp;</div>
+
+<div class="d2">via extended background-origin</div>
+
+<div style="margin:50px;">&nbsp;</div>
+
+<div class="d3">via background-position and calc</div>
+</body>
+</html>
+
