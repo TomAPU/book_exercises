@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+div.tablecloth {
+    background: white;
+    background-image: linear-gradient(90deg, rgba(200,0,0,.5) 50%, transparent 0),
+        linear-gradient(rgba(200,0,0,.5) 50%, transparent 0);
+    background-size: 30px 30px;
+
+    width: 20em;
+    height: 20em;
+}
+
+div.grid {
+    background: #58a;
+    background-image: 
+        linear-gradient(white 1px, transparent 0),
+        linear-gradient(90deg, white 1px, transparent 0);
+    background-size: 30px 30px;
+
+    width: 20em;
+    height: 20em;
+}
+
+/*overlay two grids with different line widths and colors to create
+a more realistic blueprint grid*/
+div.grid2 {
+    background: #58a;
+    background-image:
+        linear-gradient(hsla(0,0%,100%,.3) 1px, transparent 0),
+        linear-gradient(90deg, hsla(0,0%,100%,.3) 1px, transparent 0),
+        linear-gradient(white 1px, transparent 0),
+        linear-gradient(90deg, white 1px, transparent 0);
+    background-size: 
+            15px 15px,
+            15px 15px,
+            75px 75px,
+            75px 75px;
+
+    width: 30em;
+    height: 30em;
+}
+
+div.polka {
+    background: #655;
+    background-image: 
+        radial-gradient(tan 20%, transparent 0),
+        radial-gradient(tan 20%, transparent 0);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
+
+    width: 100%;
+    height: 30em;
+}
+
+div.checkerboards {
+    background: #eee;
+    background-image:
+        linear-gradient(45deg, #bbb 25%, transparent 0),
+        linear-gradient(45deg, transparent 75%, #bbb 0),
+        linear-gradient(45deg, #bbb 25%, transparent 0),
+        linear-gradient(45deg, transparent 75%, #bbb 0);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px, 15px 15px, 30px 30px;
+
+    width: 30em;
+    height: 30em;
+}
+
+div.checkerboards-improved {
+    background: #eee;
+    background-image:
+        linear-gradient(45deg, rgba(0,0,0,.25) 25%, transparent 0, transparent 75%, rgba(0,0,0,.25) 0),
+        linear-gradient(45deg, rgba(0,0,0,.25) 25%, transparent 0, transparent 75%, rgba(0,0,0,.25) 0);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
+
+    width: 30em;
+    height: 30em;
+}
+
+div.checkerboards-svg {
+    background: #eee url('data:image/svg+xml,\
+            <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill-opacity=".25" >\
+            <rect x="50" width="50" height="50" />\
+            <rect y="50" width="50" height="50" />\
+            </svg>');
+    background-size: 30px 30px;
+
+    width: 30em;
+    height: 30em;
+}
+
+</style>
+</head>
+<body>
+
+<div class="tablecloth">Tablecloth</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="grid">Grid lines serve as guides</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="grid2">overlay two grids with different line widths and colors to create
+a more realistic blueprint grid</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="polka"></div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="checkerboards"></div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="checkerboards-improved"></div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="checkerboards-svg"></div>
+</body>
+</html>
+
