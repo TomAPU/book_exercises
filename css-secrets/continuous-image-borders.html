@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+.something-meaningful {
+    background: url(images/stone-art.jpg);
+    background-size: cover;
+    padding: 1em;
+
+    width: 40em;
+    height: 40em;
+}
+
+.something-meaningful > div {
+    background: white;
+    padding: 1em;
+}
+
+.via-2-backgrounds {
+    padding: 1em;
+    border: 1em solid transparent;
+    background:
+        linear-gradient(white, white) padding-box,
+        url(images/stone-art.jpg) border-box 0 / cover;
+    /*background-size: cover;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;*/ /* default is padding-box */
+
+    width: 40em;
+    height: 40em;
+}
+
+.envelope-via-border-image {
+    padding: 1em;
+    border: 16px solid transparent;
+    border-image: 16 repeating-linear-gradient(-45deg,
+        red 0, red 1em, transparent 0, 
+        transparent 2em, #58a 0,
+        #58a 3em, transparent 0, transparent 4em);
+    max-width: 20em;
+    font: 100%/1.6 Baskerville, Palatino, serif;
+
+    height: 20em;
+    width: 20em;
+}
+
+</style>
+</head>
+<body>
+
+<div class="something-meaningful">
+    <div>Old school via 2 elements</div>
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="via-2-backgrounds">
+    via 2 backgrounds
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="envelope-via-border-image">
+    Envelope via border-image.
+</div>
+</body>
+</html>
+
