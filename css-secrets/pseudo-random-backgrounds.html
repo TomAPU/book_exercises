@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+/*
+This technique was dubbed “The Cicada Principle” by Alex Walker,
+who first had the idea of using primes to increase perceived randomness of
+backgrounds.
+*/
+div.random{
+    background: hsl(20, 40%, 90%);
+    background-image:
+        linear-gradient(90deg, #fb3 11px, transparent 0),
+        linear-gradient(90deg, #ab4 23px, transparent 0),
+        linear-gradient(90deg, #655 41px, transparent 0);
+        background-size: 41px 100%, 61px 100%, 83px 100%;
+
+    width: 20em;
+    height: 20em;
+}
+
+</style>
+</head>
+<body>
+<div class="random">
+</div>
+<div style="margin:20px;">&nbsp;</div>
+
+</body>
+</html>
+
