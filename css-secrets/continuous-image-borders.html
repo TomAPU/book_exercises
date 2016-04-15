@@ -51,6 +51,47 @@ body {
     width: 20em;
 }
 
+.envelope-via-background {
+    padding: 1em;
+    border: 1em solid transparent;
+    background: linear-gradient(white, white) padding-box,
+        repeating-linear-gradient(-45deg,
+            red 0, red 12.5%,
+            transparent 0, transparent 25%,
+            #58a 0, #58a 37.5%,
+            transparent 0, transparent 50%)
+        0 / 5em 5em; /* position / size */
+
+    height: 15em;
+    width: 15em;
+}
+
+@keyframes ants { to { background-position: 100% } }
+
+.marching-ants {
+    padding: 1em;
+    border: 1px solid transparent;
+    background:
+        linear-gradient(white, white) padding-box,
+        repeating-linear-gradient(-45deg,
+            black 0, black 25%, white 0, white 50%
+        ) 0 / .6em .6em;
+    animation: ants 12s linear infinite;
+
+    width: 15em;
+    height: 15em;
+
+}
+
+.footnote {
+    border-top: .2em solid transparent;
+    border-image: 100% 0 0 linear-gradient(90deg,
+                                currentColor 4em,
+                                transparent 0);
+                /* 100% 0 0: border-image-slice */
+    padding-top: 1em;
+}
+
 </style>
 </head>
 <body>
@@ -69,6 +110,24 @@ body {
 
 <div class="envelope-via-border-image">
     Envelope via border-image.
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="envelope-via-background">
+    envelope via background
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="marching-ants">
+    Marching ants
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="footnote">
+    Footnote
 </div>
 </body>
 </html>
