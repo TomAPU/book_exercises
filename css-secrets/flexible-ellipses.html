@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+.circle-via-border-radius {
+    background: #fb3;
+    width: 200px;
+    height: 200px;
+    border-radius: 100px; /* >= half the size */
+}
+
+.ellipse-via-border-radius {
+    background: #fb3;
+    width: 200px;
+    height: 150px;
+    border-radius: 100px / 75px; /* >= half the size */
+}
+
+.ellipse-via-border-radius2 {
+    background: #fb3;
+    width: 200px;
+    height: 150px;
+    /*border-radius: 50%/50%;*/
+    border-radius: 50%;
+}
+
+</style>
+</head>
+<body>
+
+<div class="circle-via-border-radius">
+    circle via border radius
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="ellipse-via-border-radius">
+    ellipse via border radius
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="ellipse-via-border-radius2">
+    ellipse via border radius 50%
+</div>
+
+</body>
+</html>
+
