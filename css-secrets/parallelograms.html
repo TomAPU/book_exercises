@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+.parallelogram-via-2-elems {
+    transform: skew(-45deg);
+
+    display: block; /* only applies to block/inline-block element */
+
+    background-color: #58a;
+}
+.parallelogram-via-2-elems div {
+    transform: skew(45deg);
+}
+
+.parallelogram-via-pseudo-elem {
+    position: relative;
+
+    padding: 0.5em 1em;
+}
+
+.parallelogram-via-pseudo-elem:before {
+    content: '';
+    position: absolute;
+    top: 0; right:0; bottom: 0; left: 0; /* on top of the box */
+    z-index: -1;
+    background-color: #58a;
+    transform: skew(-45deg);
+}
+
+</style>
+</head>
+<body>
+
+<a class="parallelogram-via-2-elems">
+    <div>
+        Parallelogram via 2 elements
+    </div>
+</a>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<a class="parallelogram-via-pseudo-elem">
+    Parallelogram via pseudo elem
+</a>
+
+</body>
+</html>
+
