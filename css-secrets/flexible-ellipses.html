@@ -31,6 +31,26 @@ body {
     border-radius: 50%;
 }
 
+.half-ellipse-top {
+    background: #fb3;
+    width: 200px;
+    height: 150px;
+    border-radius: 50% / 100% 100% 0 0;
+}
+
+.half-ellipse-left {
+    background: #fb3;
+    width: 200px;
+    height: 150px;
+    border-radius: 100% 0 0 100% / 50%;
+}
+
+.quarter-ellipse {
+    background: #fb3;
+    width: 200px;
+    height: 150px;
+    border-radius: 100% 0 0 0;
+}
 </style>
 </head>
 <body>
@@ -51,6 +71,23 @@ body {
     ellipse via border radius 50%
 </div>
 
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="half-ellipse-top">
+    half ellipse on top
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="half-ellipse-left">
+    half ellipse on left
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="quarter-ellipse">
+    quarter ellipse
+</div>
 </body>
 </html>
 
