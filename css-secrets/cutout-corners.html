@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+.one-cutout {
+    background: #58a;
+    background: linear-gradient(-45deg, transparent 15px, #58a 0);
+
+    width:20em;
+    height: 20em;
+}
+
+.two-cutout {
+    background: #58a;
+    background:
+        linear-gradient(-45deg, transparent 15px, #58a 0) right,
+        linear-gradient(45deg, transparent 15px, #58a 0) left;
+    background-size: 50% 100%;
+    background-repeat: no-repeat;
+    width:20em;
+    height: 20em;
+}
+
+.four-cutout {
+    background: #58a;
+    background:
+        linear-gradient(135deg, transparent 15px, #58a 0) top left,
+        linear-gradient(-135deg, transparent 15px, #58a 0) top right,
+        linear-gradient(-45deg, transparent 15px, #58a 0) bottom right,
+        linear-gradient(45deg, transparent 15px, #58a 0) bottom left;
+    background-size: 50% 50%;
+    background-repeat: no-repeat;
+    width:20em;
+}
+
+.four-cutout-inner {
+    background: #58a;
+    background:
+        radial-gradient(circle at top left, transparent 15px, #58a 0) top left,
+        radial-gradient(circle at top right, transparent 15px, #58a 0) top right,
+        radial-gradient(circle at bottom right, transparent 15px, #58a 0) bottom right,
+        radial-gradient(circle at bottom left, transparent 15px, #58a 0) bottom left;
+    background-size: 50% 50%;
+    background-repeat: no-repeat;
+
+    width:20em;
+    height:20em;
+}
+
+.cutout-via-svg {
+    border: 20px solid #58a;
+    border-image: 1 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="3" height="3" fill="%2358a"> <polygon points="0,1 1,0 2,0 3,1 3,2 2,3 1,3 0,2"/></svg>');
+    background: #58a;
+    background-clip: padding-box;
+
+    width:20em;
+    height:20em;
+}
+
+.cutout-via-clip-path {
+    background: #58a;
+    -webkit-clip-path: polygon(
+        20px 0, calc(100% - 20px) 0, 100% 20px,
+        100% calc(100% - 20px), calc(100% - 20px) 100%,
+        20px 100%, 0 calc(100% - 20px), 0 20px
+    );
+    clip-path: polygon(
+        20px 0, calc(100% - 20px) 0, 100% 20px,
+        100% calc(100% - 20px), calc(100% - 20px) 100%,
+        20px 100%, 0 calc(100% - 20px), 0 20px
+    );
+
+    width:20em;
+    height:20em;
+}
+
+</style>
+</head>
+<body>
+
+<div class="one-cutout">
+    cutout corner via linear-gradient
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="two-cutout">
+    cutout corners via linear-gradient
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="four-cutout">
+    cutout corners via linear-gradient
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="four-cutout-inner">
+    cutout corners via radial-gradient
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="cutout-via-svg">
+    cutout corners via SVG
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="cutout-via-clip-path">
+    cutout corners via clip-path
+</div>
+
+
+</body>
+</html>
+
