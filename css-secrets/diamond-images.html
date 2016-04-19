@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+.diamond-via-transform {
+    width: 400px;
+    transform: rotate(45deg);
+    overflow: hidden;
+
+    margin: 200px;
+}
+
+.diamond-via-transform > img {
+    max-width: 100%;
+    /* rotate后图片会变成6边形，上下左右会出空白，用scale将图片
+    * 放大后填充这些空白*/
+    transform: rotate(-45deg) scale(1.45); /*scale值应该比squrt(2)大*/
+}
+
+/* this method adjusts nicely to non-square images */
+.diamond-via-clip-path {
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+    -webkit-clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+    transition: 1s;
+}
+.diamond-via-clip-path:hover {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+</style>
+</head>
+<body>
+
+<div class="diamond-via-transform">
+    <img src="images/adamcatlace.jpg">
+</div>
+
+
+<div style="margin:20px;">&nbsp;</div>
+
+<img class="diamond-via-clip-path" src="images/adamcatlace.jpg">
+
+</body>
+</html>
+
