@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+.color-tint-filter {
+    transition: .5s filter, .5s -webkit-filter;
+    -webkit-filter: sepia() saturate(4) hue-rotate(295deg);
+    filter: sepia() saturate(4) hue-rotate(295deg);
+
+    max-width: 640px;
+}
+
+.color-tint-filter:hover,
+.color-tint-filter:focus
+{
+    -webkit-filter: none;
+    filter: none;
+}
+
+.tinted-image {
+    background-color: hsl(335, 100%, 50%);
+    background-blend-mode: luminosity;
+    transition: .5s background-color;
+
+    width: 640px; height: 440px;
+    background-size: cover;
+}
+
+.tinted-image:hover {
+    background-color: transparent;
+}
+
+</style>
+</head>
+<body>
+
+<img class="color-tint-filter" src="images/tiger.jpg"/>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="tinted-image" style="background-image:url(images/tiger.jpg)">
+</div>
+
+</body>
+</html>
+
