@@ -9,32 +9,115 @@ body {
 	color: #434343;
 }
 
-.pie {
+.animate-pie {
+	width: 100px; height: 100px;
+	border-radius: 50%;
+	background: yellowgreen;
+	background-image: linear-gradient(to right, transparent 50%, currentColor 0);
+	color: #655;
+}
+
+.animate-pie::before {
+	content: '';
+	display: block;
+	margin-left: 50%;
+	height: 100%;
+	border-radius: 0 100% 100% 0 / 50%;
+	background-color: inherit;
+	transform-origin: left;
+	animation: spin 3s linear infinite, bg 6s step-end infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(.5turn); } /*0.5*360=180deg */
+}
+
+@keyframes bg {
+    50% { background: currentColor; }
+}
+
+.static-pie {
+    position: relative;
+	width: 100px; 
+    line-height: 100px;
+	border-radius: 50%;
+	background: yellowgreen;
+	background-image: linear-gradient(to right, transparent 50%, #655 0);
+	color: transparent;
+    text-align: center;
+}
+
+@keyframes static_spin {
+    to { transform: rotate(.5turn); }
+}
+
+@keyframes static_bg {
+    50% { background: #655; }
+}
+
+.static-pie::before {
+	content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    width: 50%; height: 100%;
+	border-radius: 0 100% 100% 0 / 50%;
+	background-color: inherit;
+	transform-origin: left;
+	animation: static_spin 50s linear infinite, static_bg 100s step-end infinite;
+    animation-play-state: paused;
+    animation-delay: inherit;
+}
+
+/* we just need to add a larger green circle under-
+neath the stroke, and rotate it 90° counterclockwise so that it starts
+from the top middle. */
+/*
+ we can specify a certain radius on the circle
+so that the length of its circumference is (infinitesimally close to) 100, so
+that we can specify the  stroke-dasharray lengths as percentages,
+without having to make calculations. Because the circumference is 2πr, our
+radius needs to be 100/ 2π ≈ 15.915494309, which for our needs could be
+rounded up to 16. We will also specify the SVG’s dimensions in the  viewBox
+attribute instead of the  width and  height attributes, to make it adjust to
+the size of its container.
+*/
+svg {
     width: 100px; height: 100px;
-    border-radius: 50%;
+    transform: rotate(-90deg);
     background: yellowgreen;
-    background-image:
-        linear-gradient(to right, transparent 50%, #655 0);
+    border-radius: 50%;
 }
 
-.pie::before {
-    content: '';
-    display: block;
-    margin-left: 50%;
-    height: 100%;
-    border-radius: 0 100% 100% 0 / 50%;
-    background-color: inherit;
-    transform-origin: left;
-    transform: rotate(.2turn); /* 0.2*360=72deg */
+@keyframes fillup {
+    to { stroke-dasharray: 100 100; }
 }
 
+circle {
+    fill: yellowgreen;
+    stroke: #655;
+    stroke-width: 32;
+    stroke-dasharray: 0 100; /* for 0% */
+    animation: fillup 5s linear infinite;
+}
 </style>
 </head>
 <body>
 
-<div class="pie"></div>
+<div class="animate-pie"></div>
 
 <div style="margin:20px;">&nbsp;</div>
+
+<div class="static-pie" style="animation-delay:-100s;">0%</div>
+<div class="static-pie" style="animation-delay:-20s;">20%</div>
+<div class="static-pie" style="animation-delay:-40s;">40%</div>
+<div class="static-pie" style="animation-delay:-60s;">60%</div>
+<div class="static-pie" style="animation-delay:-80s;">80%</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<svg viewBox="0 0 32 32">
+    <circle r="16" cx="16" cy="16" />
+</svg>
 
 </body>
 </html>
