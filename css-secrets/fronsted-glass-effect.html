@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+body, main::before {
+    background: url(images/tiger.jpg) 0 / cover fixed;
+}
+
+main {
+    position: relative;
+    background: hsla(0,0%,100%, .3);
+    overflow: hidden;
+
+    width: 25em;
+    margin: 0 auto;
+    padding: 1em;
+    border-radius: .3em;
+    box-shadow: 0 0 0 1px hsla(0,0%,100%,.3) inset,
+	            0 .5em 1em rgba(0, 0, 0, 0.6);
+	text-shadow: 0 1px 1px hsla(0,0%,100%,.3);
+
+}
+
+main::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    z-index: -1;
+    -webkit-filter: blur(20px);
+    filter: blur(20px);
+    /*
+    The blurring effect
+looks perfect toward the middle, but is less blurred closer to the edges. This
+happens because blurring reduces the area that is covered by a solid color
+by the blur radius.
+To circumvent this issue, we will make the pseudo-element at least  20px
+(as much as our blur radius) larger than the dimensions of its contain-
+er, by applying a margin of  -20px or less to be on the safe side, as different
+browsers might use different blurring algorithms.*/
+    margin: -30px;
+}
+
+blockquote { font-style: italic }
+blockquote cite { font-style: normal; }
+
+</style>
+</head>
+<body>
+
+<main>
+    <blockquote>
+        “The only way to get rid of a temptation is to yield to it. Resist it, and your soul grows sick with longing for the things it has forbidden to itself, with desire for what its monstrous laws have made monstrous and unlawful.”
+    <footer>
+        —<cite>Oscar Wilde, The Picture of Dorian Gray</cite>
+    </footer>
+    </blockquote>
+</main>
+
+</body>
+</html>
+
