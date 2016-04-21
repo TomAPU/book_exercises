@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+dt, dd {
+    display: inline;
+}
+dd {
+    margin: 0;
+    font-weight: bold;
+}
+
+dd + dt::before {
+    content: "\A"; /* line break unicode 0x000A, "\n" */
+    white-space: pre;
+}
+
+dd + dd::before {
+    content: ', ';
+    font-weight: normal;
+    margin-left: -.25em; /* Keep in mind that if your markup includes (uncommented) whitespace be- tween the multiple consecutive <dd>s, there will be a space before the comma. */
+}
+
+</style>
+</head>
+<body>
+
+<dl>
+    <dt>Name:</dt>
+    <dd>Lea Verou</dd>
+    <dt>Email:</dt>
+    <dd>lea@verou.me</dd>
+    <dd>hy@verou.me</dd>
+    <dt>Location:</dt>
+    <dd>Earth</dd>
+</dl>
+
+<div style="margin:20px;">&nbsp;</div>
+
+</body>
+</html>
+
