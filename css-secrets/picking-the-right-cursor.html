@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+:disabled, [disabled], [aria-disabled="true"] {
+    cursor: not-allowed;
+}
+
+.hide-cursor {
+    width: 20em;
+    height: 20em;
+    border: 1px solid red;
+    cursor: url(transparent.gif); /* fallback */
+    cursor: none;
+}
+
+</style>
+</head>
+<body>
+
+<button>Button</button>
+<button disabled>Disabled button</button>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="hide-cursor">
+    Hide cursor here.
+</div>
+
+</body>
+</html>
+
