@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+.image-slider-via-resize {
+    position: relative;
+    display: inline-block;
+}
+
+.image-slider-via-resize > div {
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: 50%; /* Initial width */
+    max-width: 100%;
+    overflow: hidden; /* Make it clip the image */
+    resize: horizontal;
+}
+
+.image-slider-via-resize > div::before {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 12px; height: 12px;
+    padding: 5px;
+    background: linear-gradient(-45deg, white 50%, transparent 0);
+    background-clip: content-box;
+    cursor: ew-resize;
+}
+
+.image-slider-via-resize img {
+    display: block;
+    user-select: none;
+}
+
+/* via range input */
+
+.image-slider-via-range-input {
+    position: relative;
+    display: inline-block;
+}
+
+.image-slider-via-range-input > div {
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: 50%; /* Initial width */
+    overflow: hidden; /* Make it clip the image */
+}
+
+.image-slider-via-range-input img {
+    display: block;
+    user-select: none;
+}
+
+.image-slider-via-range-input input {
+    position: absolute;
+    left: 0;
+    bottom: 10px;
+    width: 100%;
+    margin: 0;
+}
+</style>
+<script type="text/javascript">
+$$('.image-slider-via-range-input').forEach(function(slider) {
+        var range = document.querySelector('input');
+        range.oninput = function(){
+            this.parentNode.style.width = this.value + '%';
+        };
+});
+</script>
+</head>
+<body>
+
+<div class="image-slider-via-resize">
+    <div>
+        <img src="images/adamcatlace-before.jpg" alt="Before" />
+    </div>
+    <img src="images/adamcatlace.jpg" alt="After" />
+</div>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<div class="image-slider-via-range-input">
+    <div>
+        <img src="images/adamcatlace-before.jpg" alt="Before" />
+    </div>
+    <img src="images/adamcatlace.jpg" alt="After" />
+    <input type="range" />
+</div>
+
+</body>
+</html>
