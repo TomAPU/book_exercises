@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+/**
+ * Extending the hit area — with borders
+ */
+.extend-via-border {
+	padding: .3em .5em;
+	border-radius: 50%;
+	background: #58a;
+	color: white;
+	font: bold 150%/1 sans-serif;
+	cursor: pointer;
+	box-shadow: 0 0 0 1px rgba(0,0,0,.3) inset;
+	border: 10px solid transparent;
+	background-clip: padding-box;
+}
+
+/**
+ * Extending the hit area — with generated content
+ */
+.extend-via-pseudo-elem {
+	position: relative;
+	padding: .3em .5em;
+	background: #58a;
+	border-radius: 50%;
+	border: 1px solid rgba(0,0,0,.3);
+	box-shadow:  0 .1em .2em -.05em rgba(0,0,0,.5);
+	color: white;
+	font: bold 150%/1 sans-serif;
+	cursor: pointer;
+}
+
+.extend-via-pseudo-elem::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    bottom: -10px;
+    left: -10px;
+}
+</style>
+</head>
+<body>
+<button class="extend-via-border">+</button>
+
+<div style="margin:20px;">&nbsp;</div>
+
+<button class="extend-via-pseudo-elem">+</button>
+</body>
+</html>
+
