@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+/*
+The trick is to use two backgrounds: one for the shadow, and one
+that is basically a white rectangle to cover the shadow, acting as a mask.
+The background that generates the shadow will have the default
+background-attachment ( scroll ), because we want it to stay in place
+at all times. However, we will give the masking background a
+background-attachment of  local , so that it covers the shadow when
+we are scrolled all the way up, but scrolls with the contents when we scroll
+down, thus revealing the shadow.*/
+ul {
+    overflow: auto;
+    width: 10em;
+    height: 8em;
+    padding: .3em .5em;
+    border: 1px solid silver;
+
+    background: 
+        linear-gradient(white 30%, transparent),
+        radial-gradient(at top, rgba(0,0,0,.2), transparent 70%),
+        linear-gradient(0deg, white 30%, transparent),
+        radial-gradient(at bottom, rgba(0,0,0,.2), transparent 70%);
+    background-repeat: no-repeat;
+    background-size: 100% 50px, 100% 15px, 100% 50px, 100% 15px;
+    background-attachment: local, scroll, local, scroll;
+    background-position: top left, top left, bottom left, bottom left;
+}
+
+</style>
+</head>
+<body>
+<ul>
+    <li>Ada Catlace</li>
+    <li>Alan Purring</li>
+    <li>Schrödingcat</li>
+    <li>Tim Purrners-Lee</li>
+    <li>WebKitty</li>
+    <li>Json</li>
+    <li>Void</li>
+    <li>Neko</li>
+    <li>NaN</li>
+    <li>Cat5</li>
+    <li>Vector</li>
+</ul>
+<div style="margin:20px;">&nbsp;</div>
+
+</body>
+</html>
+
