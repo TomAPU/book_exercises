@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+@keyframes panoramic {
+    to {
+        background-position: 100% 0;
+    }
+}
+
+.panoramic {
+    width:410px; height: 410px;
+    background: url(images/panoramic.jpg);
+    background-size: auto 100%;
+    animation: panoramic 10s linear infinite alternate;
+    animation-play-state: paused;
+}
+
+.panoramic:hover, .panoramic:focus {
+    animation-play-state: running;
+}
+
+
+</style>
+</head>
+<body>
+
+<div class="panoramic"></div>
+
+</body>
+</html>
+
