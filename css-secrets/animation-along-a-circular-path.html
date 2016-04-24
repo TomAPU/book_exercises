@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+.via-2elem .path {
+    width: 300px; height: 300px;
+    padding: 20px;
+    border-radius: 50%;
+    background: #fb3;
+}
+
+.via-2elem .avatar {
+    width: 50px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.via-2elem img {
+    display: block;
+    width: inherit;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+.via-2elem .avatar {
+    animation: spin 3s infinite linear;
+    transform-origin: 50% 150px; /* at big circle center */
+}
+
+.via-2elem .avatar > img {
+    animation: inherit;
+    animation-direction: reverse;
+}
+
+.via-single-elem .path {
+    width: 300px; height:300px;
+    padding: 20px;
+    margin: 100px auto;
+    border-radius: 50%;
+    background: #fb3;
+}
+
+.via-single-elem .avatar {
+    display: block;
+    width: 50px;
+    margin: calc(50% - 25px) auto 0;
+    border-radius: 50%;
+    overflow:hidden;
+}
+
+/**
+ * Animation along a circular path - Solution 2
+ */
+ 
+@keyframes spin2 {
+	from {
+		transform: rotate(0turn)
+		           translateY(-150px) translateY(50%)
+		           rotate(1turn)
+	}
+	to {
+		transform: rotate(1turn)
+		           translateY(-150px) translateY(50%)
+		           rotate(0turn);
+	}
+}
+
+
+.via-single-elem .avatar {
+	animation: spin2 3s infinite linear;
+}
+
+</style>
+</head>
+<body>
+
+<div class="via-2elem">
+    <div class="path">
+        <div class="avatar">
+            <img src="images/adamcatlace.jpg" />
+        </div>
+    </div>
+</div>
+
+<div class="via-single-elem">
+    <div class="path">
+        <img src="images/adamcatlace.jpg" class="avatar" />
+    </div>
+</div>
+</body>
+</html>
+
