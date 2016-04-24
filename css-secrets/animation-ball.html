@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+body {
+	font: 100%/1.5 "Myriad Pro","Myriad Web","Lucida Grande","Trebuchet MS","Tahoma","Helvetica","Arial",sans-serif;
+	color: #434343;
+}
+
+@keyframes bounce {
+    60%, 80%, to {
+        transform: translateY(400px);
+        animation-timing-function: ease;
+    }
+    70% { transform: translateY(300px); } /* animation-timing-function is set by .ball animation */
+    90% { transform: translateY(360px); }
+}
+
+.ball {
+    width: 0;
+    height: 0;
+    padding: 1.5em;
+    border-radius: 50%;
+    margin: auto;
+    background: red radial-gradient(at 30% 30%, #fdd, red);
+    animation: bounce 2s cubic-bezier(.1,.25,1,.25) forwards;
+}
+
+body {
+	background: linear-gradient(skyblue, white 450px, yellowgreen 0);
+	min-height: 100vh;
+}
+</style>
+</head>
+<body>
+
+<div class="ball"></div>
+
+</body>
+</html>
+
