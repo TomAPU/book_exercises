@@ -1,3 +1,6 @@
 .DS_Store
 .DS_Store?
 *.swp
+_site/
+a.out
+*.c~

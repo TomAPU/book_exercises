@@ -1,0 +1,19 @@
+#include < s t d i o . h > 
+ 
+ # d e f i n e	N_TAB_COL	 4 
+ 
+ i n t	main()
+{
+	int i ,	c;
+
+	while ( ( c	= g e t c h a r ( ) )	!= E O F	) { 
+		 i f	(c = =	'\t') { 
+			 f o r ( i	= 0 ;	i <	N_TAB_COL; i + + ) { 
+				 p u t c h a r ( '	');
+			}
+		}
+		else { 
+			 p u t c h a r ( c ) ; 
+		 } 
+	 } 
+ } 
