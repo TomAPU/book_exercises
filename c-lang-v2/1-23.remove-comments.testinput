@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+#define INIT 0
+
+/*
+ * For test input "xxxx"
+ */
+
+int main()
+{
+    printf("/*hello world*/");
+}
