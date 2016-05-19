@@ -126,3 +126,62 @@ w           fun1(w)     fun2(w)
 B. 因此fun1实现将最低字节值，而fun2实现取最低字节值，然后符号扩展。
 
 
+p82
+2.24:
+
+无符号数：
+w位无符号数截短到k位后，结果= 原值 mod pow(2, k)， 相当于k位后面的位都置为0
+
+有符号数：
+w位截短到k位后，计算方法：将原值的比特串看着无符号数， 值 mod pow(2,k), 即相当于
+将无符号数截短至k位，再将该值解释成二进制补码的有符号数（这一步相当于解析最高有效位)
+
+因此： 对于将4位值截短到3位的计算，如下：
+
+       Hex                 Unsigned           Two's complement
+Original  Truncated   Original Truncated    Original  Truncated
+0(0000)   0           0        0            0         0
+2(0010)   2           2        2            2         2
+9(1001)   1           9        1            -7        1
+B(1011)   3           11       3            -5        3
+F(1111)   7           15       7            -1        -1
+
+p83
+2.25:
+
+Consider the following code that attempts to sum the elements of an array a, where
+the number of elements is given by parameter length:
+/* WARNING: This is buggy code */
+float sum_elements(float a[], unsigned length) {
+    int i;
+    float result = O;
+
+    for (i = O; i <= length-1; i++)
+        result+= a[i];
+    return result;
+}
+
+因此 length是无符号整数，因此 i<=length-1中，左右边都转成无符号号，即右边-1会转成无符号数pow(2,w)-1,当length为0时，会有很多次循环。
+
+修正方法是将length参数声明为int型。
+
+
+p83
+2.26:
+
+由于 size_t strlen(const char *s);
+中 size_t typedef为unsigned。
+
+/* Determine whether string s is longer than string t */
+/* WARNING: This function is buggy  */
+
+int strlonger(char *s, char *t)
+{
+    return strlen(s) - strlen(t) > O;
+}
+
+语句中strlen(s) - strlen(t) > O的左右边都会转为无符号数，
+当s的长度小于t时，本来相关是负数的，转成无符号数后就变成正数了。
+
+修改：
+    return strlen(s)>strlen(t);
