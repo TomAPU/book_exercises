@@ -1,50 +1,66 @@
 #include <stdio.h>
 #include <math.h>
 
-/* p94, 2.31: */
-/* Determine whether arguments can be added without overflow */
+/* p94, 2.32: */
+/* Determine whether arguments can be subtracted without overflow */
 /* WARNING: This code is buggy. */
-
-/*　(sum-x==y) && (sum-y==x)是永远成立的，
- *  例如，对于 sum-x, 不管sum溢出与否，值都会最终等于y
- *  例： x= Tmin=-pow(2,w-1), y= -1, 此时x+y会溢出。
- *  sum = x+y　溢出后最终值为　-pow(2,w-1)-1+pow(2,w)=pow(2,w-1)-1
- *  对于(sum-x==y)的判断：
- *  sum-x=pow(2,w-1)-1-(-pow(2,w-1))=pow(2,w)-1, 溢出后最终sum=pow(2,w)-1-pow(2,w)=-1, 即(sum-x==y) 类似 (sum-y==x)也永远成立*/
 
 int tadd_ok( int x , int y )
 {
-    int sum = x + y;
+    int sum = x+y;
 
-    return (sum-x==y) && (sum-y == x);
+    if ( (x>0 && y>0 && x+y<0) || (x<0 && x<0 && x+y>0) )
+        return 0;
+    return 1;
 }
+
+/* 当y=Tmin=-pow(2,w-1)时，-y=y
+ * 此时，假设x=Tmax=pow(2,w-1)-1, 
+ * x-y=pow(2,w-1)-1-(-pow(2,w-1))=pow(2,w)-1=-1, 溢出了;
+ * 但是因为此时y=-y, tadd_ok(x,-y)=tadd_ok(x,y)没有溢出，返回为1
+ */
+
+int tsub_ok(int x, int y)
+{
+    return tadd_ok(x, -y);
+}
+
+
 
 int main(void)
 {
 	int x,y, s;
 
-    /* 以下tadd_ok调用全部都返回1 */
+    /* 以下tsub_ok调用全部都返回1 */
 	/* case1: negetive overflow */
 	x = -pow(2, sizeof(int)*8-1); /* Tmin */
 	y = -1;
-    s = x+y;
-	printf("(%d)+(%d)=(%d), tadd_ok=%d\n", x, y, s, tadd_ok(x, y) );
+    
+    printf("y=%d, -y=%d\n", y, -y);
+    s = x-y;
+	printf("(%d)-(%d)=(%d), tsub_ok=%d\n", x, y, s, tsub_ok(x, y) );
 
-	/* case2: -pow(2,w-1)<=x+y<0 */
+	/* case2: -pow(2,w-1)<=x-y<0 */
 	x = -pow(2, sizeof(int)*8-1); /* Tmin */
 	y = 1;
-    s=x+y;
-	printf("(%d)+(%d)=(%d), tadd_ok=%d\n", x, y, s, tadd_ok(x, y) );
+    s=x-y;
+	printf("(%d)-(%d)=(%d), tsub_ok=%d\n", x, y, s, tsub_ok(x, y) );
 
-	/* case3: 0<=x+y<pow(2,w-1) */
+	/* case3: 0<=x-y<pow(2,w-1) */
 	x = pow(2, sizeof(int)*8-1)-1; /* Tmax */
 	y = -1;
     s = x + y;
-	printf("(%d)+(%d)=(%d), tadd_ok=%d\n", x, y, s, tadd_ok(x, y) );
+	printf("(%d)-(%d)=(%d), tsub_ok=%d\n", x, y, s, tsub_ok(x, y) );
 
 	/* case4: positive overflow */
 	x = pow(2, sizeof(int)*8-1)-1; /* Tmax */
 	y = 1;
     s = x + y;
-	printf("(%d)+(%d)=(%d), tadd_ok=%d\n", x, y, s, tadd_ok(x, y) );
+	printf("(%d)-(%d)=(%d), tsub_ok=%d\n", x, y, s, tsub_ok(x, y) );
+
+	/* case4: positive overflow */
+	x = pow(2, sizeof(int)*8-1)-1; /* Tmax */
+	y = -pow(2, sizeof(int)*8-1); /* Tmin */
+    s = x + y;
+	printf("(%d)-(%d)=(%d), tsub_ok=%d\n", x, y, s, tsub_ok(x, y) );
 }
