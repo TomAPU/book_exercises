@@ -30,7 +30,7 @@ U<max> = 2T<max> + 1
 
 二进制补码的属性：当x为非负数时，-x=pow(2,w)-x，即-x是x的补码，即将x取反加1就等到-x。
 
-C99的<stdint.h>中定义的各种固定倍数的整型，如unit16_t, int32_t, 在printf是要用相应的宏表示输出类型：
+C99的<stdint.h>??（应该是<inttypes.h>）中定义的各种固定倍数的整型，如unit16_t, int32_t, 在printf是要用相应的宏表示输出类型：
 如当x为int32_t, y为unit64_t是。
 printf( "x=%" PRId32 ", y=%" PRIu64 "\n", x, y ), 再由C语言的字符串自动拼接来完成。
 

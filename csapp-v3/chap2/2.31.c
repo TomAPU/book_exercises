@@ -3,7 +3,6 @@
 
 /* p94, 2.32: */
 /* Determine whether arguments can be subtracted without overflow */
-/* WARNING: This code is buggy. */
 
 int tadd_ok( int x , int y )
 {
@@ -20,6 +19,7 @@ int tadd_ok( int x , int y )
  * 但是因为此时y=-y, tadd_ok(x,-y)=tadd_ok(x,y)没有溢出，返回为1
  */
 
+/* WARNING: This code is buggy. */
 int tsub_ok(int x, int y)
 {
     return tadd_ok(x, -y);
