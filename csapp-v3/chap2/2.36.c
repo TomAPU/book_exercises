@@ -26,11 +26,10 @@ int tmult_ok( int32_t x , int32_t y )
 
 int tmult_ok2( int32_t x , int32_t y )
 {
-    int64_t p = (int64_t)x * (int64_t)y; /*一定要先打x和y转成int64_t后再相乘 */
-    int32_t q = x*y;
+    int64_t p = (int64_t)x * y; /*一定要先将右边手动转成 int64_t */
     /*printf("p=%" PRId64 ", q=%" PRId32 "\n", p,q);*/
 
-    return p == q;
+    return p == (int32_t) p;
 }
 
 
