@@ -11,7 +11,7 @@
 
 /* 对于整数x除以pow(2,k), 是算术右移实现
  * 1. 当x>0时，值为 x>>k, 
- * 2. 当x<0时，值为 (x + 1<<k -1) >> k
+ * 2. 当x<0时，值为 (x + 1<<k -1) >> k, 即(x+pow(2,k)-1) >> k
  */
 
 int32_t div16( int32_t x )
@@ -19,6 +19,14 @@ int32_t div16( int32_t x )
     /* 先根据最高位计算出偏移量 1<<k-1, 这里k=4 */
     int sign = (x >> 31) & 0x01; /* 负数时为1, 正数时为0 */
     return (x + (sign << 4) - sign) >> 4;
+}
+
+/*或者用下面的实现也可以 */
+int32_t div16_version2(int32_t x)
+{
+    /* Compute bias to be either 0 (x>=0) or 15 (x<0) */
+    int32_t bias = (x>>31) & 0xF;
+    return (x+bias) >> 4;
 }
 
 int main(void)

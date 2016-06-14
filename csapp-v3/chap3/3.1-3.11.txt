@@ -1,0 +1,262 @@
+p182
+3.1:
+ATT 汇编语言操作数的表示：
+   Type        Form                     Operand Value                   Comment
+1. 直接数据    $Const_value             Const_value                     Immediate
+2. 寄存器数据  %r                       R[r]                            Register; 将所有16个寄存器想象为一个数组，而单个寄存器的标识想象为数组的索引，则其值表示为R[r]
+3. 内存数据    Const_value(%b,%i,SCALE) M[Const_value+R[b]+R[i]*SCALE]  Scaled indexed; Const_value+R[i]是基地址， R[i]是索引值，SCALE是比例值，这种类似有以下的几个变种：
+3.1内存数据    Const_value              M[Const_value]                  Absolute; 内存绝对地址上的数据， 把整个内存想象为一个数组 M
+3.2内存数据    (%r)                     M[R[r]]                         Indirect; 寄存器内存的是地址，内存上该地址上的数据
+3.3内存数据    Const_value(%r)          M[Const_value+R[r]]             Base + displacement
+3.4内存数据    (%b, %i)                 M[R[b]+R[i]]                    Indexed; 第一个寄存器内是基地址，第二个寄存器内是索引地址
+3.5内存数据    Const_value(%b, %i)      M[Const_value+R[b]+R[i]]        Indexed; 第一个寄存器内的地址+Const_value是基地址，第二个寄存器内是索引地址
+3.6内存数据    (,%i,SCALE)              M[R[i]*SCALE]                   Scaled indexed
+3.7内存数据    Const_value(,%i,SCALE)   M[Const_value+R[i]*SCALE]       Scaled indexed 
+3.8内存数据    (%b,%i,SCALE)            M[R[b]+R[i]*SCALE]              Scaled indexed 
+
+因此，对于下面的寄存器值和内存内的值，各操作数的值如下：
+Address     Value       Register        Value
+0x100       0xFF        %rax            0x100
+0x104       0xAB        %rcx            0x1
+0x108       0x13        %rdx            0x3
+0x10C       0x11
+
+Operand         Value
+%rax            0x100; 寄存器内的值
+0x104           0xAB;  该内存地址内的值
+$0x108          0x108; 直接值
+(%rax)          0xFF;   内存地址0x100内的值
+4(%rax)         0xAB; 内存地址4+0x100=0x104内的值
+9(%rax,%rdx)    0x11; 内存地址9+0x100+0x3=0x10c内的值
+260(%rcx,%rdx)  0x13; 内存地址260+0x1+0x3=0x108内的值
+0xFC(,%rcx,4)   0xFF; 内存地址0xFC+0x1*4=0x100内的值
+(%rax,%rdx,4)   0x11; 内存地址0x100+0x3*4=0x10C内的值
+
+
+p185
+3.2:
+mov的一般格式为 mov src, dst， 其中 src 和 dst 不能同时为内存地址。
+
+mov 指令分类：
+1、默认mov
++ movb src, dst     只操作 dst 最低位的 byte, 8 bits, 其它位不变
++ movw src, dst     只操作 dst 最低位的 word, 16 bits, 其它位不变
++ movl src, dst     只操作 dst 最低们的 long word, 32 bits, 其它位置0, 这是64位机器为兼容32位设置的
++ movq src, dst     dst is quad word, 64 bits, 这里如果src 为常数，只能用32位的二进制补码表示，然后符号扩展为64位
++ movabsq   src,dst 和以上的类似，但是这里的src如果为常数，可以用 64 位的二进制补码直接指定
+
+2、zero extension mov
++ movzbw src, dst   src is byte, dst is word
++ movzbl src, dst   src is byte, dst is long word
++ movzwl src, dst   src is word, dst is long word
++ movzbq src, dst   src is byte, dst is quad word
++ movzwq src, dst   src is word, dst is quad word   
++ 没有 movzlq 这个指令，因为这个指令可以用movl操作来实
+
+3. sign extension mov
++ movsbw src, dst
++ movsbl src, dst
++ movsbq src, dst
++ movswl src, dst
++ movswq src, dst
++ movslq src, dst
++ cltq              这个指令为 copy long world to quad word, 没的隐含操作数为%rax, 即将 %eax 符号扩展为 %rax
+
+通过寄存器的名称格式获取操作数的大小：
+1. 大小为 byte: 以 l 结尾(low)，如 %al-%dl, %sil, %dil, %bpl; 以 b 结尾的(byte), 如 %r8b-%r15b, mov后缀为b
+2. 大小为 word: 以 x 结尾, 如 %ax-%dx; 默认名称的，录 %si, %di, %bp, %sp; 以 w 结尾的(word), 如 %r8w-%r15w, mov 后缀为w
+3. 大小为long word: 以e 开头的， 如%eax-%edx, %esi, %edi, %ebp, %esp; 以 d 结尾的(double word), 如 %r8d-%r15d, mov后缀为l
+4. 大小为quad word: 以 r 开头的， 如%rax-%rdx, %rsi, %rdi, %rbp, %rsp; %r8-%15;  mov后缀为q
+因此题目中补全后的各指令如下：
+movl %eax, (%rsp)
+movw (%rax), %dx
+movb $0xFF, %bl
+movb (%rsp,%rdx,4), %dl
+movq (%rdx), %rax
+movw %dx, (%rax)
+
+
+p186
+3.3:
+解释下面各指令的出错原因：
+movb $0xF, (%ebx)   作为dest 地址的寄存器名称应该用64位的, --> movb $0xF, (%rbx)
+movl %rax, (%rsp)   改为 movl %eax, (%rsp) 或者 movq %rax, (%rsp)
+movw (%rax), 4(%rsp)    mov指令的两个操作数不能可以是内存地址
+movb %al, %sl , 没有 %sl, --> movb %al, %sil
+movq %rax,$0x123    dest 不能为直接数。
+movl %eax, %rdx     改为 movl %eax, %edx 或者 movq %rax, %rdx
+movb %si, 8(%rbp)   改为 movb %sil, 8(%rbp) 或者 movw %si, 8(%rbp)
+
+p187
+3.4:
+有下面的 C 语句：
+
+src_t *sp;
+dest_t *dp;
+*dp = (dest_t) *sp;
+
+假设转换成汇编语言后， sp 的值存在寄存 %rdi, dp 的值存在 %rsi，而第一个指令都是将sp的值先导入到 %rax寄存器的相应字节中的，
+对于不同的类似，补全下面的汇编指令：
+
+src_t           dest_t      Instruction
+long            long        movq (%rdi), %rax
+                            movq %rax, (%rsi)
+
+char            int         movb (%rdi), %al
+                            movsbw %al, (%rsi)
+
+char            unsigned    movb (%rdi), %al
+                            movzbw %al, (%rsi)
+
+unsigned char   long        movb (%rdi), %al
+                            movzbq %al, (%rsi)
+
+int             char        movl (%rdi), %eax
+                            movb %al, (%rsi)
+
+unsigned unsigned char      movl (%rdi), %eax
+                            movb %al, (%rsi)
+
+char            short       movb (%rdi), %al
+                            movzbw %al, %(rsi)
+
+
+p189
+3.5:
+将下面的汇编代码转成 C 语言，
+假设函数函数为 void decode1( long *xp, long *yp, long *zp);
+
+汇编代码为：
+
+void decode1(1ong *xp, long *yp, long *zp);
+xp in %rdi, yp in %rsi, zp in %rdx
+decode1:
+    movq (%rdi), %r8    --> %r8=*xp;
+    movq (%rsi) , %rcx  --> %rcx=*yp
+    movq (%rdx), %rax   --> %rax=*zp
+    movq %r8, (%rsi)    --> *yp = *xp;
+    movq %rcx, (%rdx)   --> *zp = *yp;
+    movq %rax, (%rdi)   --> *xp = *zp;
+    ret
+
+/* xp 所指的值 存到 yp, yp 的存到 zp, zp 的存到 xp */
+void decode1(1ong *xp, long *yp, long *zp)
+{
+    long tmp;
+    tmp = *yp;
+    *yp = *xp;
+    *xp = *zp;
+    *xz = tmp;
+}
+
+p192
+3.6:
+
+指令 leaq S, D 的意思为 Load effective address, 作用为 D = &S, 即将 S的地址值传给 D。
+因此，对于下面的指令，设%rax的值为x, %rcx的值为 y, 则 %rdx 结果如下：
+
+Instruction                     Result
+leaq 6(%rax), %rdx              6+x
+leaq (%rax,%rcx), %rdx          x+y
+leaq (%rax, %rcx,4), %rdx       x+4y
+leaq 7(%rax,%rax,8),%rdx        7+x+8*x=9x+7
+leaq 0xA(,%rcx,4),%rdx          0xA+4y
+leaq 9(%rax,%rcx,2),%rdx        9+x+2y
+
+p193
+3.7:
+编译器会将一些算术表达式翻译为一系列 leaq 指令，
+根据下面的汇编指令，写出其对应的 C 表达式：
+
+汇编：
+long scale2(long x, long y, long z)
+x in %rdi , y in %rsi , z in %rdx
+scale2:
+    leaq (%rdi,%rdi,4), %rax  --> %rax = x + 4x = 5x
+    leaq (%rax,%rsi,2), %rax  --> %rax = 5x + 2y
+    leaq (%rax,%rdx,8), %ra   --> %rax = (5x+2y)+8z
+    iet
+
+对应的 C代码：
+long scale2(long x, long y, long z)
+    long t = 5*x + 2*y + 8*z;
+    return t;
+}
+
+
+p194
+3.8:
+
+假设知道下面的这些初始值：
+Address Value   Register    Value
+0x100   0xFF    %rax        0x100
+0x108   0xAB    %rcx        0x1
+0x110   0x13    %rdx        0x3
+0x118   0x11
+
+指出下面各条指令的结果以及目的：
+
+Instruction                 Destination & Value
+addq %rcx,(%rax)            %rax=0x100 内存地址处的值+0x1, 即 0x100 地址处的值0x100, 0x100处为0x00, 0x101处进1位
+subq rdx,8(%rax)            0x100+8=0x108 内存地址处的值-0x3, 值为 0xAB-0x3=0xA9
+imulq $16,(%rax,%rdx,8)     0x100+8*0x3=0x118 内存地址处的值 *16, 值为 0x11*16=0x110, 即0x118处为0x10, 0x119处进1位
+incq 16(%rax)               0x100+16=0x110 内存地址处的值+1, 值为0x13+1 = 0x14
+decq %rcx                   %rcx 的值-1, 值为 0x1-1=0x00
+subq %rdx,%rax              %rax = %rax-%rdx, 值为 %rax = 0x100-0x3=0xFD
+
+p195
+3.9:
+
+位移操作分逻辑位移和算术位移两类：
+逻辑位移是默认的位移， 指令是 shl,shr, 即 shift logical left/right
+算术位移指令是sal, sar, 即 shift arithmetic left/right
+格式为，如 sal src, dst          其中 src 可以有两种值： 1、可以为立即值，2、可以是 %cl，即最多移位数由 %rcx的最低字节值表示
+
+因此，对于下面的 C 函数：
+long shift_left4_rightn(long x, long n)
+{
+    x <<= 4;
+    x >>= n;
+    return x;
+}
+
+转变成汇编后如下：
+long shift_left4_rightn(long x, long n)
+x in %rdi, n in %rsi
+shift_left4_rightn:
+    movq %rdi, %rax     Get x
+    shrq $4, %rax       x <<= 4
+    movl %esi, %ecx     Get n (4 bytes)
+    salq %cl, %rax      x >>= n; 该格式的指令只能用 %cl
+
+
+p196
+3.10:
+对于汇编代码如下：
+long arith2(long x, long y, long z)
+x in %rdi, y in %rsi, z in %rdx
+arith2:
+    orq %rsi, %rdi  --> x |= y
+    sarq $3, %rdi   --> x >>= 3
+    notq %rdi       --> x ~= x
+    movq %rdx, %rax --> %rax = z
+    subq %rdi, %rax --> %rax = z-x
+    ret
+
+补全对应的 C 代码如下：
+long arith2(long x, long y, long z)
+{
+    long t1 = x|y;
+    long t2 = t1 >> 3;
+    long t3 = ~t2;
+    long t4 = z-t3;
+    return t4;
+}
+
+
+p197
+3.11:
+
+对应指令 xorq %rdx, %rdx
+A. 这条指令的作用是对 %rdx 寄存器清 0, 一般可以用于初始化变量。
+B. 可以用 movq $0, %rdx 来代替
