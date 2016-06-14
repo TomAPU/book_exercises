@@ -203,3 +203,60 @@ imulq $16,(%rax,%rdx,8)     0x100+8*0x3=0x118 内存地址处的值 *16, 值为 
 incq 16(%rax)               0x100+16=0x110 内存地址处的值+1, 值为0x13+1 = 0x14
 decq %rcx                   %rcx 的值-1, 值为 0x1-1=0x00
 subq %rdx,%rax              %rax = %rax-%rdx, 值为 %rax = 0x100-0x3=0xFD
+
+p195
+3.9:
+
+位移操作分逻辑位移和算术位移两类：
+逻辑位移是默认的位移， 指令是 shl,shr, 即 shift logical left/right
+算术位移指令是sal, sar, 即 shift arithmetic left/right
+格式为，如 sal src, dst          其中 src 可以有两种值： 1、可以为立即值，2、可以是 %cl，即最多移位数由 %rcx的最低字节值表示
+
+因此，对于下面的 C 函数：
+long shift_left4_rightn(long x, long n)
+{
+    x <<= 4;
+    x >>= n;
+    return x;
+}
+
+转变成汇编后如下：
+long shift_left4_rightn(long x, long n)
+x in %rdi, n in %rsi
+shift_left4_rightn:
+    movq %rdi, %rax     Get x
+    shrq $4, %rax       x <<= 4
+    movl %esi, %ecx     Get n (4 bytes)
+    salq %cl, %rax      x >>= n; 该格式的指令只能用 %cl
+
+
+p196
+3.10:
+对于汇编代码如下：
+long arith2(long x, long y, long z)
+x in %rdi, y in %rsi, z in %rdx
+arith2:
+    orq %rsi, %rdi  --> x |= y
+    sarq $3, %rdi   --> x >>= 3
+    notq %rdi       --> x ~= x
+    movq %rdx, %rax --> %rax = z
+    subq %rdi, %rax --> %rax = z-x
+    ret
+
+补全对应的 C 代码如下：
+long arith2(long x, long y, long z)
+{
+    long t1 = x|y;
+    long t2 = t1 >> 3;
+    long t3 = ~t2;
+    long t4 = z-t3;
+    return t4;
+}
+
+
+p197
+3.11:
+
+对应指令 xorq %rdx, %rdx
+A. 这条指令的作用是对 %rdx 寄存器清 0, 一般可以用于初始化变量。
+B. 可以用 movq $0, %rdx 来代替
