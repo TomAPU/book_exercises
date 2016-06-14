@@ -260,3 +260,114 @@ p197
 对应指令 xorq %rdx, %rdx
 A. 这条指令的作用是对 %rdx 寄存器清 0, 一般可以用于初始化变量。
 B. 可以用 movq $0, %rdx 来代替
+
+
+p200
+3.12:
+
+特殊算术运算指令： 64位的两数相乘后不溢出的结果为 128 位，位 一个 oct word。
+
++ **imulq S** 结果为 S * R[%rax] -> R[%rdx]:R[%rax]    signed full multiply, 结果的高8字节存在 rdx 寄存器， 低8字节存在 rax 寄存器。
++ **mulq S**  unsigned full multiply
++ **cqto**  指令把 R[%rax] 的值符号扩展到 R[%rdx], 形成一个 oct word, convert quad word to oct word
++ **idivq S** 将 R[%rdx]:R[%rax] mod S 的值存在 R[%rdx](即余数）， R[%rdx]:R[%rax] / S 的值存在 R[%rax](即商数）, 有符号数的除法
++ **divq S** 无符号数的除法
+
+对于 C 语言函数：
+
+void uremdiv(unsigned long x, unsigned long y, unsigned long *qp, unsigned long *rp)
+{
+    unsigned long q = x/y;
+    unsigned long r = x % y;
+    *qp = q;
+    *rp = r;
+}
+
+参与文中的 remdiv 版本，写出汇编代码如下：
+
+void uremdiv(unsigned long x, unsigned long y, unsigned long *qp, unsigned long *rp)
+
+X in %rdi, y in %rsi , qp in %rdx, rp in %rcx
+
+remdiv:
+    movq %rdx, %r8      Copy qp
+    movq %rdi, %rax     Move x to lower 8 bytes of dividend
+    xorq %rdx, %rdx     Set %rdx to 0
+    divq %rsi           Divide by y
+    moveq %rax, (%r8)   Store quotient at qp
+    moveq %rdx, (%rcx)  Store remainder at rp
+    ret 
+
+
+p204
+3.13:
+条件控制代码中。
+1. CF Carry Flag位，最近的操作有进位时设置
+2. ZF Zero Flag 位，最近的操作值为0时设置
+3. SF Sign Flag 位, 最近的操作值为负数时设置，即就是符号位的值
+4. OF Oveflow Flag， 有符号数操作有溢出时设置
+
+CMP a, b 系列的语句，通过 a-b的值来设置条件控制代码中的各位值， 有 cmpb, cmpw, cmpl, cmpq 4位指令
+TEST a, b 系列的语句，通过 a&b的值来设置条件控制代码中的各位值， 有 testb, testw, testl, testq 4位指令
+SET x 系统的语句，则根据条件控制代码中的各值，将 x 的最低字节设置为0或1,
+1. 判断是否相等，有 sete, setne
+2. 判断是否是负数， sets, setns
+3. 有符号数的判断， setg, setge, setl, setle, sete    greater, less
+4. 无符号数的判断, seta, setae, setb, setbe, sete     above, below
+
+因此， 对于 C 代码：
+int comp(data_t a, data_t b)
+{
+    return a COMP b;
+}
+
+对于下面的各种汇编，给出对应的 C 代码中的 data_t 和 COMP
+
+A.  cmpl %esi, %edi     long word , 32 bit
+    setl %al            less, signed     --> int, <
+B.  cmpw %si, %di       word, 16 bit
+    setge %al           greater or equal, signed --> short, >=
+C.  cmpb %sil, %dil     byte, 8 bit
+    setbe %al           below or equal, unsigned --> unsigned char, <=
+D.  cmpq %rsi, %rdi     quad word, 64 bit
+    setne %al           not equal, signed or unsiged,--> unsigned long or long, !=
+
+p205
+3.14:
+对于 C 代码：
+int test(data_t a){
+    return a TEST 0;
+}
+
+根据下面的各种汇编代码，给出对应的 C 代码中的 data_t 和 TEST
+A.  testq %rdi, %rdi    quad word, long
+    setge %al           greater or equal, signed --> long, >=
+B.  testw %di, %di      word, short
+    sete %al            equal, signed or unsigned --> short/unsigned short, ==
+C.  testb %dil, %dil    byte, char
+    seta %al            above, unsigned --> unsigned char, >
+D.  testl %edi, %edi    long word, int
+    setle %al           less or equal, signed --> int, <=
+    
+
+p209
+3.15:
+JMP 指令，转换成机器码后，JMP 的参数一般是按 与 PC 值的相对值编码的，相对值是二进制补码表示的， PC 值为
+JMP 下一条命令的地址。
+故可根据disassemble 反汇编出来的信息，补全如下：
+
+A. 
+4003fa: 74 02   je 4003fe   --> 值为 02+4003fc
+4003fc: ff d0   callq *%rax
+
+B. 
+40042f: 74 f4   je  400425  f4 二进制初码为-12, 0x400431-12=0x400425
+400431: 5d      pop %rbp
+
+C.
+400544: 77 02   ja 400547
+400545: 5d      pop %rbp
+
+D. 相对值为 4 byte 的 二进制补码表示
+4005e8: e9 73 ff ff ff      jmpq    ffffff73表示 -0x8d, 故值为 0x4005ed-0x8d=0x400560  
+4005ed: 90                  nop 
