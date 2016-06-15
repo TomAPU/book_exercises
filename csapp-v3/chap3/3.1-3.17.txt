@@ -371,3 +371,109 @@ C.
 D. 相对值为 4 byte 的 二进制补码表示
 4005e8: e9 73 ff ff ff      jmpq    ffffff73表示 -0x8d, 故值为 0x4005ed-0x8d=0x400560  
 4005ed: 90                  nop 
+
+
+p212
+3.16:
+
+对于一般的判断语句：
+if (test-expr)
+    then-statement
+else
+    else-statement
+
+会转成下面形式的汇编格式：
+    t = test-expr
+    if (!t)
+        goto false;
+    then-statement
+    goto done
+false:
+    else-statement
+done:
+
+因此
+c 代码：
+void cond(long a, long *p)
+{
+    if (p && a > *p)
+        *p = a;
+}
+
+生成的汇编如下：
+
+void cond(long a , long *p)
+a in %rdi, p in %rsi
+cond:
+    testq %rsi, %rsi    p is 0 ?
+    je .L1
+    cmpq %rdi, (%rsi)  *p >= a ?
+    jqe .L1
+    movq %rdi, (%rsi)   *p = a
+.L1:
+    rep; ret    这里的 rep 相当于 nop, 用于使 跳转标签的第一条指令不是 ret
+
+A. 写出其对应的 goto 式的 C 代码：
+
+void cond(long a, long *p)
+{
+    if (!p)
+        goto L1;
+    if ( *p >= a )
+        goto L1;
+    *p = a;
+L1:
+    return;
+}
+
+B. 为什么 C 中只有一个 if 语句，但汇编中有两个分支？ 因为这个 if 语句中有 2 个判断。
+
+
+p212
+3.17:
+
+if else 语句也能转成下面的形式：
+
+    t = test-expr
+    if (t)
+        goto true;
+    else-statement
+    goto done
+true:
+    then-statement
+done:
+
+将文中的 gotodiff_se 改成这种形式：
+
+原来的gotodiff_se:
+
+long gotodiff_se(long x, long y)
+{
+    long result;
+    if (x >= y)
+        goto x_ge_y;
+    lt_cnt ++;
+    return = y - x;
+    return result;
+x_ge_y:
+    ge_cnt ++;
+    result = x-y;
+    return result;
+}
+
+修改后：
+long gotodiff_se2(long x, long y)
+{
+    long result;
+    if (x < y)
+        goto x_lt_y;
+    ge_cnt ++;
+    result = x-y;
+    return result;
+x_lt_y:
+    lt_cnt ++;
+    return = y - x;
+    return result;
+}
+
+B. 解释在这两种中选择一种的原因? 这两种
