@@ -476,4 +476,219 @@ x_lt_y:
     return result;
 }
 
-B. 解释在这两种中选择一种的原因? 这两种
+B. 解释在这两种中选择一种的原因? 没有哪个是更好的，选择概念大的区域在最前面。
+
+
+p213
+3.18:
+
+根据产生的汇编代码，补全 C 语言版本的代码。
+
+汇编如下：
+long test(long x, long y, long z)
+x in %rdi, y in %rsi, z in %rdx
+test:
+    leaq (%rdi,%rsi), %rax      %rax = x + y
+    addq %rdx, %rax             %rax = %rax + %rdx = x+y+z
+    cmpq $-3, %rdi              x >= -3 ?
+    jge  .L2                    True, to L2
+    cmpq %rdx, %rsi             y >= z ?
+    jge .L3                     True, to L3
+    movq %rdi, %rax             %rax = x
+    imulq %rsi, %rax            %rax = x * y
+    ret
+.L3:
+    movq %rsi, %rax             %rax = y
+    imulq %rdx,%rax             %rax = y * z
+    ret
+.L2:
+    cmpq $2, %rdi               x <= 2?
+    jle .L4                     True, to L4
+    movq %rdi, %rax             %rax = x
+    imulq %rdx, %rax            %rax = x * z
+.L4:
+    rep; ret
+
+C 代码：
+
+long test(long x, long y, long z)
+{
+    long val  = x + y + y;
+    if ( x < -3) {
+        if ( y < z)
+            val = x * y;
+        else
+            val = y * z;
+    } else if ( x > 2)
+        val = x * z;
+    return val;
+}
+
+p216
+3.19:
+误判的概率是 p, 没有误判时的运行时间是 Tok, 误判后的惩罚时间（多运行时间）是 Tmp
+平均运行时间 Tavg = (1-p)Tok + p(Tok+Tmp) = Tok + pTmp
+正常运行时间Tran即为p=0.5时的平均运行时间，Tran = Tok + 0.5Tmp, 因此， Tmp = 2(Tran-Tok)
+
+因此，
+A. 对于 Tran = 31, Tok = 16, miss penalty Tmp = 2*(31-16)=30
+B. 当出错误判断时，需要的运行时间周期是 Tok+Tmp = 16+30 = 46
+
+
+p219
+3.20:
+
+现代机器使用流水线并行执行技术来提高运行效率，因此条件跳转指令 JMP 会使流水线中的预取指令无效，从而显著影响执行效率。
+一些判断语句也可以用条件数据移动指令 CMOV 来执行，从而将跳转结构转变成顺序执行条件，提高执行效率。一般的 x = y>z? a: b 这样的语句可以
+进行这样的优化。
+
+根据汇编代码补全 C 代码：
+汇编：
+long arith(long x)
+x in %rdi
+arith:
+    leaq 7(%rdi), %rax  %rax = 7 + x
+    testq %rdi, %rdi    x 是否为非负数？
+    cmovns %rdi, %rax   是的话 %rax = x
+    sarq $3, %rax       %rax >>= 3
+    ret
+
+对应的 C 代码：
+long arith(long x)
+{
+    return x>=0? x:(7+x) * 8
+}
+
+
+p219
+3.21:
+
+根据汇编补全对应的 C 程序。
+
+汇编：
+long test(long x, long y)
+x in %rdi, y in %rsi
+test:
+    leaq 0(,%rdi, 8), %rax  %rax=8*x
+    testq %rsi, %rsi        y<=0 ?
+    jle .L2                 true, to L2
+    movq %rsi, %rax         %rax = y
+    subq %rdi, %rax         %rax = y-x
+    movq %rdi, %rdx         %rdx = x
+    andq %rsi, %rdx         %rdx = x & y
+    cmpq %rsi, %rdi         x >= y?
+    cmovge %rdx, %rax       %rax = (x>=y)?(x&y): y-x
+    ret
+L2:
+    addq %rsi, %rdi         %rdi = x + y
+    cmpq $-2, %rsi          y <= -2 ?
+    cmovle %rdi, %rax       %rax = (y<=-2)? (x+y):8*x
+    ret
+
+C 代码：
+
+long test(long x, long y)
+{
+    long val = x << 3;
+    if( y > 0){
+        if (x>=y)
+            val = x&y ;
+        else
+            val = y-x;
+    } else if (y<=-2)
+        val = x+y;
+    return val;
+}
+
+p221
+3.22:
+
+do ... while 循环可以用条件跳转 JMP 指令来模拟实现。
+对于一个 factorial 值 f = n!= n*(n-1)*...*1
+A. 如果值用32-bit int 表示，最大 n能取什么？ 32位 int Tmax = pow(2, 31)-1 = 1073741824, n=12 时， f= 479001600, n=13, f= 6227020800 溢出
+B. 如果用 64位， Tmax = pow(2,63)-1 = 9223372036854775807L, n = 20 时, f = 2432902008176640000, n=21时， f= 51090942171709440000 溢出
+
+
+p222
+3.23:
+
+对于如下 C 代码：
+long dw_loop(long x)
+{
+    long y = x*x;
+    long *p = &x;
+    long n = 2*x;
+    do {
+        x += y;
+        (*p)++;
+        n--;
+    } while (n>0);
+    return x;
+}
+
+生成的汇编如下：
+long dw_loop(long x)
+x initially in %rdi
+n in %rdx
+y in %rcx
+dw_loop:
+    movq %rdi, %rax             %rax = x
+    movq %rdi, %rcx             y = x
+    imulq %rdi, %rcx            y = x*x
+    leaq (%rdi,%rdi), %rdx      n = 2*x
+.L2
+    leaq 1(%rcx,%rax), %rax     %rax = 1+x+y
+    subq $1, %rdx               n --
+    testq %rdx, %rdx            n > 0 ?
+    jg .L2
+    rep; ret
+
+A. Which registers are used to hold program values x,y, and n?
+    根据循环条件判断语句 testq, n 对应寄存器 %rdx, 根据 y=x*x, 知 y 对应寄存器 %rcx
+B. How has the compiler eliminated the need for pointer variable p and the pointer dereference implied by the expression (*p)++?
+    由于 p 对中间计算过程和返回结果都没有影响，故优化后去除了。
+C. Add annotations to the assembly code describing the operation of the program.
+
+
+p224
+3.24:
+
+对于 while(...){..}循环，可以转换成 jump to middle 型的汇编，如下：
+
+    goto test;
+loop:
+    body-statement
+test:
+    t = test-expr;
+    if (t)
+        goto loop;
+
+
+对于下面的用 GCC -Og 选项生成的汇编代码，补全 C 代码：
+
+汇编：
+long loop_while(long a , long b)
+a in %rdi, b in %rsi
+loop_while:
+    movl $1, %eax           %eax = 1
+    jmp .L2
+.L3:
+    leaq (%rdi,%rsi), %rdx  %rdx = a+b
+    imulq %rdx,%rax         %rax = %rax*(a+b)
+    addq  $1,%rdi           a = a+1
+.L2:
+    cmpq  %rsi,%rdi         a<b?
+    jl  .L3
+    rep; ret
+
+
+C 代码：
+long loop_while(long a, long b)
+{
+    long result = 1;
+    while (a<b) {
+        result = result * (a+b);
+        a = a+1;
+    }
+    return result;
+}
