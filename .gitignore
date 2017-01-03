@@ -4,3 +4,5 @@
 _site/
 a.out
 *.c~
+
+*.pyc

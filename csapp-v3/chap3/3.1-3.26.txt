@@ -1,0 +1,865 @@
+p182
+3.1:
+ATT 汇编语言操作数的表示：
+   Type        Form                     Operand Value                   Comment
+1. 直接数据    $Const_value             Const_value                     Immediate
+2. 寄存器数据  %r                       R[r]                            Register; 将所有16个寄存器想象为一个数组，而单个寄存器的标识想象为数组的索引，则其值表示为R[r]
+3. 内存数据    Const_value(%b,%i,SCALE) M[Const_value+R[b]+R[i]*SCALE]  Scaled indexed; Const_value+R[i]是基地址， R[i]是索引值，SCALE是比例值，这种类似有以下的几个变种：
+3.1内存数据    Const_value              M[Const_value]                  Absolute; 内存绝对地址上的数据， 把整个内存想象为一个数组 M
+3.2内存数据    (%r)                     M[R[r]]                         Indirect; 寄存器内存的是地址，内存上该地址上的数据
+3.3内存数据    Const_value(%r)          M[Const_value+R[r]]             Base + displacement
+3.4内存数据    (%b, %i)                 M[R[b]+R[i]]                    Indexed; 第一个寄存器内是基地址，第二个寄存器内是索引地址
+3.5内存数据    Const_value(%b, %i)      M[Const_value+R[b]+R[i]]        Indexed; 第一个寄存器内的地址+Const_value是基地址，第二个寄存器内是索引地址
+3.6内存数据    (,%i,SCALE)              M[R[i]*SCALE]                   Scaled indexed
+3.7内存数据    Const_value(,%i,SCALE)   M[Const_value+R[i]*SCALE]       Scaled indexed 
+3.8内存数据    (%b,%i,SCALE)            M[R[b]+R[i]*SCALE]              Scaled indexed 
+
+因此，对于下面的寄存器值和内存内的值，各操作数的值如下：
+Address     Value       Register        Value
+0x100       0xFF        %rax            0x100
+0x104       0xAB        %rcx            0x1
+0x108       0x13        %rdx            0x3
+0x10C       0x11
+
+Operand         Value
+%rax            0x100; 寄存器内的值
+0x104           0xAB;  该内存地址内的值
+$0x108          0x108; 直接值
+(%rax)          0xFF;   内存地址0x100内的值
+4(%rax)         0xAB; 内存地址4+0x100=0x104内的值
+9(%rax,%rdx)    0x11; 内存地址9+0x100+0x3=0x10c内的值
+260(%rcx,%rdx)  0x13; 内存地址260+0x1+0x3=0x108内的值
+0xFC(,%rcx,4)   0xFF; 内存地址0xFC+0x1*4=0x100内的值
+(%rax,%rdx,4)   0x11; 内存地址0x100+0x3*4=0x10C内的值
+
+
+p185
+3.2:
+mov的一般格式为 mov src, dst， 其中 src 和 dst 不能同时为内存地址。
+
+mov 指令分类：
+1、默认mov
++ movb src, dst     只操作 dst 最低位的 byte, 8 bits, 其它位不变
++ movw src, dst     只操作 dst 最低位的 word, 16 bits, 其它位不变
++ movl src, dst     只操作 dst 最低们的 long word, 32 bits, 其它位置0, 这是64位机器为兼容32位设置的
++ movq src, dst     dst is quad word, 64 bits, 这里如果src 为常数，只能用32位的二进制补码表示，然后符号扩展为64位
++ movabsq   src,dst 和以上的类似，但是这里的src如果为常数，可以用 64 位的二进制补码直接指定
+
+2、zero extension mov
++ movzbw src, dst   src is byte, dst is word
++ movzbl src, dst   src is byte, dst is long word
++ movzwl src, dst   src is word, dst is long word
++ movzbq src, dst   src is byte, dst is quad word
++ movzwq src, dst   src is word, dst is quad word   
++ 没有 movzlq 这个指令，因为这个指令可以用movl操作来实
+
+3. sign extension mov
++ movsbw src, dst
++ movsbl src, dst
++ movsbq src, dst
++ movswl src, dst
++ movswq src, dst
++ movslq src, dst
++ cltq              这个指令为 copy long world to quad word, 没的隐含操作数为%rax, 即将 %eax 符号扩展为 %rax
+
+通过寄存器的名称格式获取操作数的大小：
+1. 大小为 byte: 以 l 结尾(low)，如 %al-%dl, %sil, %dil, %bpl; 以 b 结尾的(byte), 如 %r8b-%r15b, mov后缀为b
+2. 大小为 word: 以 x 结尾, 如 %ax-%dx; 默认名称的，录 %si, %di, %bp, %sp; 以 w 结尾的(word), 如 %r8w-%r15w, mov 后缀为w
+3. 大小为long word: 以e 开头的， 如%eax-%edx, %esi, %edi, %ebp, %esp; 以 d 结尾的(double word), 如 %r8d-%r15d, mov后缀为l
+4. 大小为quad word: 以 r 开头的， 如%rax-%rdx, %rsi, %rdi, %rbp, %rsp; %r8-%15;  mov后缀为q
+因此题目中补全后的各指令如下：
+movl %eax, (%rsp)
+movw (%rax), %dx
+movb $0xFF, %bl
+movb (%rsp,%rdx,4), %dl
+movq (%rdx), %rax
+movw %dx, (%rax)
+
+
+p186
+3.3:
+解释下面各指令的出错原因：
+movb $0xF, (%ebx)   作为dest 地址的寄存器名称应该用64位的, --> movb $0xF, (%rbx)
+movl %rax, (%rsp)   改为 movl %eax, (%rsp) 或者 movq %rax, (%rsp)
+movw (%rax), 4(%rsp)    mov指令的两个操作数不能可以是内存地址
+movb %al, %sl , 没有 %sl, --> movb %al, %sil
+movq %rax,$0x123    dest 不能为直接数。
+movl %eax, %rdx     改为 movl %eax, %edx 或者 movq %rax, %rdx
+movb %si, 8(%rbp)   改为 movb %sil, 8(%rbp) 或者 movw %si, 8(%rbp)
+
+p187
+3.4:
+有下面的 C 语句：
+
+src_t *sp;
+dest_t *dp;
+*dp = (dest_t) *sp;
+
+假设转换成汇编语言后， sp 的值存在寄存 %rdi, dp 的值存在 %rsi，而第一个指令都是将sp的值先导入到 %rax寄存器的相应字节中的，
+对于不同的类似，补全下面的汇编指令：
+
+src_t           dest_t      Instruction
+long            long        movq (%rdi), %rax
+                            movq %rax, (%rsi)
+
+char            int         movb (%rdi), %al
+                            movsbw %al, (%rsi)
+
+char            unsigned    movb (%rdi), %al
+                            movzbw %al, (%rsi)
+
+unsigned char   long        movb (%rdi), %al
+                            movzbq %al, (%rsi)
+
+int             char        movl (%rdi), %eax
+                            movb %al, (%rsi)
+
+unsigned unsigned char      movl (%rdi), %eax
+                            movb %al, (%rsi)
+
+char            short       movb (%rdi), %al
+                            movzbw %al, %(rsi)
+
+
+p189
+3.5:
+将下面的汇编代码转成 C 语言，
+假设函数函数为 void decode1( long *xp, long *yp, long *zp);
+
+汇编代码为：
+
+void decode1(1ong *xp, long *yp, long *zp);
+xp in %rdi, yp in %rsi, zp in %rdx
+decode1:
+    movq (%rdi), %r8    --> %r8=*xp;
+    movq (%rsi) , %rcx  --> %rcx=*yp
+    movq (%rdx), %rax   --> %rax=*zp
+    movq %r8, (%rsi)    --> *yp = *xp;
+    movq %rcx, (%rdx)   --> *zp = *yp;
+    movq %rax, (%rdi)   --> *xp = *zp;
+    ret
+
+/* xp 所指的值 存到 yp, yp 的存到 zp, zp 的存到 xp */
+void decode1(1ong *xp, long *yp, long *zp)
+{
+    long tmp;
+    tmp = *yp;
+    *yp = *xp;
+    *xp = *zp;
+    *xz = tmp;
+}
+
+p192
+3.6:
+
+指令 leaq S, D 的意思为 Load effective address, 作用为 D = &S, 即将 S的地址值传给 D。
+因此，对于下面的指令，设%rax的值为x, %rcx的值为 y, 则 %rdx 结果如下：
+
+Instruction                     Result
+leaq 6(%rax), %rdx              6+x
+leaq (%rax,%rcx), %rdx          x+y
+leaq (%rax, %rcx,4), %rdx       x+4y
+leaq 7(%rax,%rax,8),%rdx        7+x+8*x=9x+7
+leaq 0xA(,%rcx,4),%rdx          0xA+4y
+leaq 9(%rax,%rcx,2),%rdx        9+x+2y
+
+p193
+3.7:
+编译器会将一些算术表达式翻译为一系列 leaq 指令，
+根据下面的汇编指令，写出其对应的 C 表达式：
+
+汇编：
+long scale2(long x, long y, long z)
+x in %rdi , y in %rsi , z in %rdx
+scale2:
+    leaq (%rdi,%rdi,4), %rax  --> %rax = x + 4x = 5x
+    leaq (%rax,%rsi,2), %rax  --> %rax = 5x + 2y
+    leaq (%rax,%rdx,8), %ra   --> %rax = (5x+2y)+8z
+    iet
+
+对应的 C代码：
+long scale2(long x, long y, long z)
+    long t = 5*x + 2*y + 8*z;
+    return t;
+}
+
+
+p194
+3.8:
+
+假设知道下面的这些初始值：
+Address Value   Register    Value
+0x100   0xFF    %rax        0x100
+0x108   0xAB    %rcx        0x1
+0x110   0x13    %rdx        0x3
+0x118   0x11
+
+指出下面各条指令的结果以及目的：
+
+Instruction                 Destination & Value
+addq %rcx,(%rax)            %rax=0x100 内存地址处的值+0x1, 即 0x100 地址处的值0x100, 0x100处为0x00, 0x101处进1位
+subq rdx,8(%rax)            0x100+8=0x108 内存地址处的值-0x3, 值为 0xAB-0x3=0xA9
+imulq $16,(%rax,%rdx,8)     0x100+8*0x3=0x118 内存地址处的值 *16, 值为 0x11*16=0x110, 即0x118处为0x10, 0x119处进1位
+incq 16(%rax)               0x100+16=0x110 内存地址处的值+1, 值为0x13+1 = 0x14
+decq %rcx                   %rcx 的值-1, 值为 0x1-1=0x00
+subq %rdx,%rax              %rax = %rax-%rdx, 值为 %rax = 0x100-0x3=0xFD
+
+p195
+3.9:
+
+位移操作分逻辑位移和算术位移两类：
+逻辑位移是默认的位移， 指令是 shl,shr, 即 shift logical left/right
+算术位移指令是sal, sar, 即 shift arithmetic left/right
+格式为，如 sal src, dst          其中 src 可以有两种值： 1、可以为立即值，2、可以是 %cl，即最多移位数由 %rcx的最低字节值表示
+
+因此，对于下面的 C 函数：
+long shift_left4_rightn(long x, long n)
+{
+    x <<= 4;
+    x >>= n;
+    return x;
+}
+
+转变成汇编后如下：
+long shift_left4_rightn(long x, long n)
+x in %rdi, n in %rsi
+shift_left4_rightn:
+    movq %rdi, %rax     Get x
+    shrq $4, %rax       x <<= 4
+    movl %esi, %ecx     Get n (4 bytes)
+    salq %cl, %rax      x >>= n; 该格式的指令只能用 %cl
+
+
+p196
+3.10:
+对于汇编代码如下：
+long arith2(long x, long y, long z)
+x in %rdi, y in %rsi, z in %rdx
+arith2:
+    orq %rsi, %rdi  --> x |= y
+    sarq $3, %rdi   --> x >>= 3
+    notq %rdi       --> x ~= x
+    movq %rdx, %rax --> %rax = z
+    subq %rdi, %rax --> %rax = z-x
+    ret
+
+补全对应的 C 代码如下：
+long arith2(long x, long y, long z)
+{
+    long t1 = x|y;
+    long t2 = t1 >> 3;
+    long t3 = ~t2;
+    long t4 = z-t3;
+    return t4;
+}
+
+
+p197
+3.11:
+
+对应指令 xorq %rdx, %rdx
+A. 这条指令的作用是对 %rdx 寄存器清 0, 一般可以用于初始化变量。
+B. 可以用 movq $0, %rdx 来代替
+
+
+p200
+3.12:
+
+特殊算术运算指令： 64位的两数相乘后不溢出的结果为 128 位，位 一个 oct word。
+
++ **imulq S** 结果为 S * R[%rax] -> R[%rdx]:R[%rax]    signed full multiply, 结果的高8字节存在 rdx 寄存器， 低8字节存在 rax 寄存器。
++ **mulq S**  unsigned full multiply
++ **cqto**  指令把 R[%rax] 的值符号扩展到 R[%rdx], 形成一个 oct word, convert quad word to oct word
++ **idivq S** 将 R[%rdx]:R[%rax] mod S 的值存在 R[%rdx](即余数）， R[%rdx]:R[%rax] / S 的值存在 R[%rax](即商数）, 有符号数的除法
++ **divq S** 无符号数的除法
+
+对于 C 语言函数：
+
+void uremdiv(unsigned long x, unsigned long y, unsigned long *qp, unsigned long *rp)
+{
+    unsigned long q = x/y;
+    unsigned long r = x % y;
+    *qp = q;
+    *rp = r;
+}
+
+参与文中的 remdiv 版本，写出汇编代码如下：
+
+void uremdiv(unsigned long x, unsigned long y, unsigned long *qp, unsigned long *rp)
+
+X in %rdi, y in %rsi , qp in %rdx, rp in %rcx
+
+remdiv:
+    movq %rdx, %r8      Copy qp
+    movq %rdi, %rax     Move x to lower 8 bytes of dividend
+    xorq %rdx, %rdx     Set %rdx to 0
+    divq %rsi           Divide by y
+    moveq %rax, (%r8)   Store quotient at qp
+    moveq %rdx, (%rcx)  Store remainder at rp
+    ret 
+
+
+p204
+3.13:
+条件控制代码中。
+1. CF Carry Flag位，最近的操作有进位时设置
+2. ZF Zero Flag 位，最近的操作值为0时设置
+3. SF Sign Flag 位, 最近的操作值为负数时设置，即就是符号位的值
+4. OF Oveflow Flag， 有符号数操作有溢出时设置
+
+CMP a, b 系列的语句，通过 a-b的值来设置条件控制代码中的各位值， 有 cmpb, cmpw, cmpl, cmpq 4位指令
+TEST a, b 系列的语句，通过 a&b的值来设置条件控制代码中的各位值， 有 testb, testw, testl, testq 4位指令
+SET x 系统的语句，则根据条件控制代码中的各值，将 x 的最低字节设置为0或1,
+1. 判断是否相等，有 sete, setne
+2. 判断是否是负数， sets, setns
+3. 有符号数的判断， setg, setge, setl, setle, sete    greater, less
+4. 无符号数的判断, seta, setae, setb, setbe, sete     above, below
+
+因此， 对于 C 代码：
+int comp(data_t a, data_t b)
+{
+    return a COMP b;
+}
+
+对于下面的各种汇编，给出对应的 C 代码中的 data_t 和 COMP
+
+A.  cmpl %esi, %edi     long word , 32 bit
+    setl %al            less, signed     --> int, <
+B.  cmpw %si, %di       word, 16 bit
+    setge %al           greater or equal, signed --> short, >=
+C.  cmpb %sil, %dil     byte, 8 bit
+    setbe %al           below or equal, unsigned --> unsigned char, <=
+D.  cmpq %rsi, %rdi     quad word, 64 bit
+    setne %al           not equal, signed or unsiged,--> unsigned long or long, !=
+
+p205
+3.14:
+对于 C 代码：
+int test(data_t a){
+    return a TEST 0;
+}
+
+根据下面的各种汇编代码，给出对应的 C 代码中的 data_t 和 TEST
+A.  testq %rdi, %rdi    quad word, long
+    setge %al           greater or equal, signed --> long, >=
+B.  testw %di, %di      word, short
+    sete %al            equal, signed or unsigned --> short/unsigned short, ==
+C.  testb %dil, %dil    byte, char
+    seta %al            above, unsigned --> unsigned char, >
+D.  testl %edi, %edi    long word, int
+    setle %al           less or equal, signed --> int, <=
+    
+
+p209
+3.15:
+JMP 指令，转换成机器码后，JMP 的参数一般是按 与 PC 值的相对值编码的，相对值是二进制补码表示的， PC 值为
+JMP 下一条命令的地址。
+故可根据disassemble 反汇编出来的信息，补全如下：
+
+A. 
+4003fa: 74 02   je 4003fe   --> 值为 02+4003fc
+4003fc: ff d0   callq *%rax
+
+B. 
+40042f: 74 f4   je  400425  f4 二进制初码为-12, 0x400431-12=0x400425
+400431: 5d      pop %rbp
+
+C.
+400544: 77 02   ja 400547
+400545: 5d      pop %rbp
+
+D. 相对值为 4 byte 的 二进制补码表示
+4005e8: e9 73 ff ff ff      jmpq    ffffff73表示 -0x8d, 故值为 0x4005ed-0x8d=0x400560  
+4005ed: 90                  nop 
+
+
+p212
+3.16:
+
+对于一般的判断语句：
+if (test-expr)
+    then-statement
+else
+    else-statement
+
+会转成下面形式的汇编格式：
+    t = test-expr
+    if (!t)
+        goto false;
+    then-statement
+    goto done
+false:
+    else-statement
+done:
+
+因此
+c 代码：
+void cond(long a, long *p)
+{
+    if (p && a > *p)
+        *p = a;
+}
+
+生成的汇编如下：
+
+void cond(long a , long *p)
+a in %rdi, p in %rsi
+cond:
+    testq %rsi, %rsi    p is 0 ?
+    je .L1
+    cmpq %rdi, (%rsi)  *p >= a ?
+    jqe .L1
+    movq %rdi, (%rsi)   *p = a
+.L1:
+    rep; ret    这里的 rep 相当于 nop, 用于使 跳转标签的第一条指令不是 ret
+
+A. 写出其对应的 goto 式的 C 代码：
+
+void cond(long a, long *p)
+{
+    if (!p)
+        goto L1;
+    if ( *p >= a )
+        goto L1;
+    *p = a;
+L1:
+    return;
+}
+
+B. 为什么 C 中只有一个 if 语句，但汇编中有两个分支？ 因为这个 if 语句中有 2 个判断。
+
+
+p212
+3.17:
+
+if else 语句也能转成下面的形式：
+
+    t = test-expr
+    if (t)
+        goto true;
+    else-statement
+    goto done
+true:
+    then-statement
+done:
+
+将文中的 gotodiff_se 改成这种形式：
+
+原来的gotodiff_se:
+
+long gotodiff_se(long x, long y)
+{
+    long result;
+    if (x >= y)
+        goto x_ge_y;
+    lt_cnt ++;
+    return = y - x;
+    return result;
+x_ge_y:
+    ge_cnt ++;
+    result = x-y;
+    return result;
+}
+
+修改后：
+long gotodiff_se2(long x, long y)
+{
+    long result;
+    if (x < y)
+        goto x_lt_y;
+    ge_cnt ++;
+    result = x-y;
+    return result;
+x_lt_y:
+    lt_cnt ++;
+    return = y - x;
+    return result;
+}
+
+B. 解释在这两种中选择一种的原因? 没有哪个是更好的，选择概念大的区域在最前面。
+
+
+p213
+3.18:
+
+根据产生的汇编代码，补全 C 语言版本的代码。
+
+汇编如下：
+long test(long x, long y, long z)
+x in %rdi, y in %rsi, z in %rdx
+test:
+    leaq (%rdi,%rsi), %rax      %rax = x + y
+    addq %rdx, %rax             %rax = %rax + %rdx = x+y+z
+    cmpq $-3, %rdi              x >= -3 ?
+    jge  .L2                    True, to L2
+    cmpq %rdx, %rsi             y >= z ?
+    jge .L3                     True, to L3
+    movq %rdi, %rax             %rax = x
+    imulq %rsi, %rax            %rax = x * y
+    ret
+.L3:
+    movq %rsi, %rax             %rax = y
+    imulq %rdx,%rax             %rax = y * z
+    ret
+.L2:
+    cmpq $2, %rdi               x <= 2?
+    jle .L4                     True, to L4
+    movq %rdi, %rax             %rax = x
+    imulq %rdx, %rax            %rax = x * z
+.L4:
+    rep; ret
+
+C 代码：
+
+long test(long x, long y, long z)
+{
+    long val  = x + y + y;
+    if ( x < -3) {
+        if ( y < z)
+            val = x * y;
+        else
+            val = y * z;
+    } else if ( x > 2)
+        val = x * z;
+    return val;
+}
+
+p216
+3.19:
+误判的概率是 p, 没有误判时的运行时间是 Tok, 误判后的惩罚时间（多运行时间）是 Tmp
+平均运行时间 Tavg = (1-p)Tok + p(Tok+Tmp) = Tok + pTmp
+正常运行时间Tran即为p=0.5时的平均运行时间，Tran = Tok + 0.5Tmp, 因此， Tmp = 2(Tran-Tok)
+
+因此，
+A. 对于 Tran = 31, Tok = 16, miss penalty Tmp = 2*(31-16)=30
+B. 当出错误判断时，需要的运行时间周期是 Tok+Tmp = 16+30 = 46
+
+
+p219
+3.20:
+
+现代机器使用流水线并行执行技术来提高运行效率，因此条件跳转指令 JMP 会使流水线中的预取指令无效，从而显著影响执行效率。
+一些判断语句也可以用条件数据移动指令 CMOV 来执行，从而将跳转结构转变成顺序执行条件，提高执行效率。一般的 x = y>z? a: b 这样的语句可以
+进行这样的优化。
+
+根据汇编代码补全 C 代码：
+汇编：
+long arith(long x)
+x in %rdi
+arith:
+    leaq 7(%rdi), %rax  %rax = 7 + x
+    testq %rdi, %rdi    x 是否为非负数？
+    cmovns %rdi, %rax   是的话 %rax = x
+    sarq $3, %rax       %rax >>= 3
+    ret
+
+对应的 C 代码：
+long arith(long x)
+{
+    return x>=0? x:(7+x) * 8
+}
+
+
+p219
+3.21:
+
+根据汇编补全对应的 C 程序。
+
+汇编：
+long test(long x, long y)
+x in %rdi, y in %rsi
+test:
+    leaq 0(,%rdi, 8), %rax  %rax=8*x
+    testq %rsi, %rsi        y<=0 ?
+    jle .L2                 true, to L2
+    movq %rsi, %rax         %rax = y
+    subq %rdi, %rax         %rax = y-x
+    movq %rdi, %rdx         %rdx = x
+    andq %rsi, %rdx         %rdx = x & y
+    cmpq %rsi, %rdi         x >= y?
+    cmovge %rdx, %rax       %rax = (x>=y)?(x&y): y-x
+    ret
+L2:
+    addq %rsi, %rdi         %rdi = x + y
+    cmpq $-2, %rsi          y <= -2 ?
+    cmovle %rdi, %rax       %rax = (y<=-2)? (x+y):8*x
+    ret
+
+C 代码：
+
+long test(long x, long y)
+{
+    long val = x << 3;
+    if( y > 0){
+        if (x>=y)
+            val = x&y ;
+        else
+            val = y-x;
+    } else if (y<=-2)
+        val = x+y;
+    return val;
+}
+
+p221
+3.22:
+
+do ... while 循环可以用条件跳转 JMP 指令来模拟实现。
+对于一个 factorial 值 f = n!= n*(n-1)*...*1
+A. 如果值用32-bit int 表示，最大 n能取什么？ 32位 int Tmax = pow(2, 31)-1 = 1073741824, n=12 时， f= 479001600, n=13, f= 6227020800 溢出
+B. 如果用 64位， Tmax = pow(2,63)-1 = 9223372036854775807L, n = 20 时, f = 2432902008176640000, n=21时， f= 51090942171709440000 溢出
+
+
+p222
+3.23:
+
+对于如下 C 代码：
+long dw_loop(long x)
+{
+    long y = x*x;
+    long *p = &x;
+    long n = 2*x;
+    do {
+        x += y;
+        (*p)++;
+        n--;
+    } while (n>0);
+    return x;
+}
+
+生成的汇编如下：
+long dw_loop(long x)
+x initially in %rdi
+n in %rdx
+y in %rcx
+dw_loop:
+    movq %rdi, %rax             %rax = x
+    movq %rdi, %rcx             y = x
+    imulq %rdi, %rcx            y = x*x
+    leaq (%rdi,%rdi), %rdx      n = 2*x
+.L2
+    leaq 1(%rcx,%rax), %rax     %rax = 1+x+y
+    subq $1, %rdx               n --
+    testq %rdx, %rdx            n > 0 ?
+    jg .L2
+    rep; ret
+
+A. Which registers are used to hold program values x,y, and n?
+    根据循环条件判断语句 testq, n 对应寄存器 %rdx, 根据 y=x*x, 知 y 对应寄存器 %rcx
+B. How has the compiler eliminated the need for pointer variable p and the pointer dereference implied by the expression (*p)++?
+    由于 p 对中间计算过程和返回结果都没有影响，故优化后去除了。
+C. Add annotations to the assembly code describing the operation of the program.
+
+
+p224
+3.24:
+
+对于 while(...){..}循环，可以转换成 jump to middle 型的汇编，如下：
+
+    goto test;
+loop:
+    body-statement
+test:
+    t = test-expr;
+    if (t)
+        goto loop;
+
+
+对于下面的用 GCC -Og 选项生成的汇编代码，补全 C 代码：
+
+汇编：
+long loop_while(long a , long b)
+a in %rdi, b in %rsi
+loop_while:
+    movl $1, %eax           %eax = 1
+    jmp .L2
+.L3:
+    leaq (%rdi,%rsi), %rdx  %rdx = a+b
+    imulq %rdx,%rax         %rax = %rax*(a+b)
+    addq  $1,%rdi           a = a+1
+.L2:
+    cmpq  %rsi,%rdi         a<b?
+    jl  .L3
+    rep; ret
+
+
+C 代码：
+long loop_while(long a, long b)
+{
+    long result = 1;
+    while (a<b) {
+        result = result * (a+b);
+        a = a+1;
+    }
+    return result;
+}
+
+
+p226
+3.25:
+对于 while(..){...} 循环，如果 GCC 用 -O1选项，生成的汇编可以会用 guarded do 形式的循环，即转变成 do{..}while(..)形式，如：
+t = test-expr;
+if(!t)
+    goto done
+do
+    body-statement
+    while (test-expr)
+done:
+
+因此，对于下面的汇编，补全对应的 C 代码：
+
+汇编：
+a in %rdi, b in %rsi
+loop_while2:
+    testq %rsi, %rsi    b <= 0?
+    jle .L8             true, to L8
+    movq %rsi, %rax     %rax = b
+.L7:
+    imulq %rdi, %rax    %rax = %rax * a
+    subq %rdi, %rsi     b = b-a
+    testq %rsi,%rsi     b > 0?
+    jq .L7              true, to L7
+    rep; ret
+.L8:
+    movq %rsi,%rax      %rax = b
+    ret
+
+C 代码：
+long loop_while2(long a, long b)
+{
+    long result = b;
+    while (b>0){
+        result = result * a ;
+        b = b-a;
+    }
+    return result;
+}
+
+
+p228
+3.26:
+
+对于生成的汇编及其C 代码：
+
+汇编：
+long fun_a(unsigned long x)
+x in %rdi
+fun_a:
+    movl $0, %eax   %eax = %rax=0
+    jmp .L5
+.L6:
+    xorq %rdi,%rax  %rax = %rax ^ x
+    shrq %rdi       x >>= 1
+.L5:
+    testq %rdi,%rdi x != 0?
+    jne .L6         true, to L6
+    andl $1, %eax   %eax = &eax & 0x1
+    ret
+
+
+C 代码：
+
+long fun_a(unsigned long x)
+{
+    long val = 0;
+    while( x != 0){
+        val = val ^ x;
+        x >>= 1;
+    }
+    return val & 0x1;
+}
+
+A. Determine what loop translation method was used.
+    Jump to middle 
+B. Use the assembly-code version to fill in the missing parts of the C code.
+C. Describe in English what this function computes.
+    
+
+p231
+3.27:
+for 循环先转换成 while 循环，再汇编成 jump to middle 或 guarded-do 两种类型的汇编码：
+
+Write goto code for fact_for based on first transforming it to a while loop and
+then applying the guarded-do transformation.
+
+原 C 代码：
+long fact_for(long n)
+{
+    long i;
+    long result = 1;
+    for( i=2; i<=n; i++)
+        result *= i;
+    return result;
+}
+
+转成 guarded-do 形式的 goto while loop:
+
+long fact_for_while(long n)
+{
+    long result = 1;
+    if ( n<= 1 )
+        goto END;
+
+    long i = 2;
+LOOP:
+    result *= i;
+    i ++;
+    if ( i<=n )
+        goto LOOP;
+    }
+END:
+    return result;
+}
+
+相应的汇编：
+
+long fact_for(long n)
+n in %rdi
+fact_for:
+    movl $1, %eax       Set result = 1
+    cmpq $1, %rdi       n <= 1?
+    jle .END            true, to end 
+
+    movl $2, %edx       Set i = 2
+LOOP:
+    imulq %rdi, %rax    result = result * i;
+    addq $q, %rdx       i++
+    cmpq %rdi, %rdx     i <= n?
+    jle LOOP
+END:
+    rep;ret
+
+
+p231
+3.28:
+
+根据生成的汇编，补全 C 代码：
+
+汇编：
+
+long fun_b( unsigned long x)
+x in %rdi
+fun_b:
+    movl $64, %edx          %edx=%rdx=64,  n=64
+    movl $0, %eax           %eax=%rax=0, val = 0
+.L10:
+    movq %rdi, %rcx         %rcx = x,  tmp = x
+    andl $1, %ecx           %ecx &= 1, x 的低 32 位 & 0x1, tmp = tmp & 1
+    addq %rax, %rax         %rax = %rax + %rax, val = val + val
+    orq %rcx, %rax          %rax = %rax | x;  val = val | tmp
+    shrq %rdi               Shift right by 1; x >>= 1
+    subq $1, %rdx           %rdx -= 1   n--
+    jne .L10                %rdx != 0; n!=0 时跳转
+    rep; ret
+
+
+C 代码：
+
+long fun_b(unsigned long x)
+{
+    long val = 0;
+    long i = 0;
+    for (){
+        
+    }
+    return val;
+}

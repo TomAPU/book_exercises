@@ -1,0 +1,75 @@
+p99
+2.37:
+ XDR中的 void* copy_elements(void *ele_src[], int ele_cnt, size_t ele_size)中的第9行：
+ void *result = malloc(ele_cnt * ele_size);
+
+ 因为 malloc原型为 malloc(size_t)， ele_cnt * ele_size溢出时为出错。
+ 例：在32位机上, sizt_t为32位， ele_cnt=pow(2, 20)+1, ele_size=pow(2,12), ele_cnt*ele_size溢出后最终结果为pow(2,12)
+ 这样malloc返回的地址段太小，无法满足copy的需要。
+
+ A： 如果用下面的解决方法：
+    uint64_t asize = ele_cnt * (uint64_t) ele_size;
+    void *result = malloc(asize);
+    有没有改进？
+
+    这种方法虽然asize没有溢出，但是 malloc的参数是size_t型，将asize传入时会截住，以上面的例子为例，
+    返回的result还是和上面的一样。
+
+  B: 如何改正？
+
+      应该在传入malloc前判断是否溢出：
+      int64_t asize = ele_cnt * (int64_t) ele_size;
+      size_t asize2 = ele_cnt * ele_size;
+      if (asize == asize2) { }
+      else {}
+
+
+
+p102
+2.38:
+对于fixed-size的有符号和无符号整数，当乘以pow(2,w)时，和左移w位是相同的，当然左移后会有溢出的情况。
+
+由于乘法比加法算法更耗时，因此，很多编译器把乘法转成左移和加法。LEA指定完成 (a<<k)+b，其中k为0~3, b为0或其它值。
+当b为0或a时，单条LEA能计算哪些值：
+
+LEA指令算式: (a<<k)+b
+b  k  结果
+0  0  a
+0  1  a*2
+0  2  a*4
+0  3  a*8
+a  0  a+a=2a
+a  1  a+a*2=3a
+a  2  a+a*4=5a
+a  3  a+a*8=9a
+
+可能的结果有[a,2a,3a,4a,5a,8a,9a]
+
+
+p103
+2.39:
+对于整数x乘以常数K, K可以被表示成[(0...0)(1...1)(0..0)(1..1)..]的组，
+对于连续的一组1, 最高位为n, 最低位为m 
+则x与这组相乘的结果为:
+    A: (x<<n)+...+(x<<m), 也可以表示成
+    B: (x<<n+1)-(x<<m)
+
+对于n是最高有效位时，x<<n会溢出，故 B可以修改为 (x<<n+1)-(x<<m) = -(x<<m)
+
+
+p103
+2.40:
+
+将 x*K转成指定操作次数的移位和加减表达式
+
+ K        Shifts    Add/Subs    Expression
+------    ------    --------    -----------------------
+6[0110]      2         1         x<<2 + x<<1
+31[011111]   1         1         x<<5 - x
+-6[1010]     2         1         -x<<3 + x<<1 = (x<<1)-(x<<3)
+55[0110111]  2         2         因为0110111=0111111-0111-1, 故为((x<<6)-(x<<0)) - ((x<<3)-(x<<0)) - x = x<<6 - x<<3 -x
+
+p103
+2.41:
+对于A和B两种情况，编译器如何决定选用哪种？
+对于每个1的串，如果1的个数>2, 则用减法形式B，如果1的个数<=2, 则用A
