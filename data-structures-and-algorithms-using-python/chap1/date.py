@@ -14,9 +14,16 @@
 # + comparable(otherDate): 实现逻辑运算，如 &lt;, &lt;=, &gt;, &gt;=, ==, !==。
 # + toString(): 返回 `yyyy-mm-dd` 形式的字符串表示。
 
+from datetime import datetime
+
 class Date:
     # Creates an object instance for the specified Gregorian date.
-    def __init__(self, year, month, day):
+    def __init__(self, year=0, month=0, day=0):
+        if year==0 and month==0 and day==0:
+            date = datetime.now().date()
+            year = date.year
+            month = date.month
+            day = date.day
         self._julianDay = 0
         assert self._isValidGregorian(year, month, day), \
                 "Invalid Gregorian date."
@@ -74,19 +81,20 @@ class Date:
     def day(self):
         return (self._toGregorian())[2] # returing D from (Y, M, D)
 
-    # Returns day of the week as an int between 0 (Mon) and 6 (Sun).
-    def dayOfWeek(self):
-        year, month, day = self._toGregorian()
+    def _dayOfWeek(self, year, month, day):
         if month < 3:
             month = month + 12
             year = year - 1
         return ((13 * month + 3) // 5 + day + \
                 year + year // 4 - year // 100 + year // 400 ) % 7
+    # Returns day of the week as an int between 0 (Mon) and 6 (Sun).
+    def dayOfWeek(self):
+        year, month, day = self._toGregorian()
+        return self._dayOfWeek(year, month, day)
 
     # Returns the date as a string in Gregorian format.
     def __str__(self):
-        year, month, day = self._toGregorian()
-        return "%04d/%02d/%02d" % (year, month, day)
+        return self.asGregorian(divchar = '/')
 
     # Returns the date as a string in Gregorian format.
     def __repr__(self):
@@ -118,9 +126,9 @@ class Date:
         return year, month, day
 
     def monthName(self):
-        months = ["Jan", "Feb", "Mar", "Apr", "may", "Jun",
-                "Jul", "Aug", "Sept", "Oct", "Nov", "Dec",]
-        return months[self.month()]
+        months = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December",]
+        return months[self.month()-1]
 
     def _leapYear(self, year):
         if year % 400 == 0 or \
@@ -143,5 +151,88 @@ class Date:
         if self._julianDay < 0:
             self._julianDay = 0
 
+    def dayOfWeekName(self):
+        """
+        returns a string containing the name of the day.
+        """
+        weeknames = ["Mo", "Tu", "We", "Tu", "Fr", "Sa", "Su"]
+        return months[self.dayOfWeek()]
+
+    def dayOfYear(self):
+        """
+        returns an integer indicating the day of the year.
+        For example, the first day of February is day 32 of the year.
+        """
+
+        # 一月（31天），二月（平年28天，闰年29天），三月（31天），
+        # 四月（30天），五月（31 天），六月（30天），七月（31天），
+        # 八月（31天），九月（30天），十月（31天），十一月（30天），
+        # 十二月（31天）。
+        month_days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        year, month, day =  self._toGregorian()
+
+        days = 0
+        for m in range(1, month):
+            days + month_days[m]
+
+        if month > 2:
+            if self._leapYear(year):
+                days += 1
+
+        days += day
+        return days
+
+    def isWeekday(self):
+        "determines if the date is a weekday."
+        dw = self.dayOfWeek()
+        # dayOfWeek(): 返回星期数，值为 [0-6]，0 表示星期一，6 表示星期日。
+        if dw < 5:
+            return False
+        return True
+
+    def asGregorian(divchar = '/'):
+        # similar to the str() method but uses the optional
+        # argument divchar as the dividing character 
+        # between the three components of the Gregorian date.
+        year, month, day = self._toGregorian()
+        return "%04d%s%02d%s%02d" % (year, divchar, month, divchar, day)
+
+    def printCalendar(self, date):
+        """
+        accepts a Date object and prints a calendar for the month of the given
+        date.
+        """
+        header = "%s  %d" % (date.monthName(), date.year())
+        print(header.center(13*2))
+        print("Su  Mo  Tu  We  Th  Fr  Sa")
 
 
+        # 一月（31天），二月（平年28天，闰年29天），三月（31天），
+        # 四月（30天），五月（31 天），六月（30天），七月（31天），
+        # 八月（31天），九月（30天），十月（31天），十一月（30天），
+        # 十二月（31天）。
+        month_days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+        month = date.month()
+        month_day = month_days[month-1]
+        if month == 2:
+            if date.isLeapYear():
+                month_day += 1
+
+        # dayOfWeek(): 返回星期数，值为 [0-6]，0 表示星期一，6 表示星期日。
+        dw = self._dayOfWeek(date.year(), month, 1)
+        dw = (dw+1) % 7 # 值为 [0-6]，0 表示 Su，6 表示Sa
+
+        for i in range(0, dw): # first day line
+            print(" "*4, end='')
+
+        for d in range(1, month_day+1):
+            print("%2d  "%d, end='')
+            dw += 1
+            if dw % 7 == 0:
+                print("")
+        print("")
+
+if __name__ == "__main__":
+    date = Date(2007, 11, 3)
+    date.printCalendar(date)
