@@ -41,6 +41,40 @@ class StudentFileReader:
         student.gpa = float(self._inputFile.readline())
         return student
 
+class StudentCSVFileReader:
+    def __init__( self, filename):
+        self._inputSrc = filename
+        self._inputFile = None
+
+    def open( self ):
+        self._inputFile = open(self._inputSrc, 'r')
+
+    def close( self ):
+        self._inputFile.close()
+        self._inputFile = None
+
+    def fetchRecord( self ):
+        line = self._inputFile.readline()
+        if line == '' :
+            return None
+
+        vals = line.split(',')
+        student = StudentRecord()
+        student.idNum = int(vals[0])
+        student.firstName = vals[1].rstrip()
+        student.lastName  = vals[2].rstrip()
+        student.classCode = int(vals[3])
+        student.gpa = float(vals[4])
+        return student
+
+    def fetchAll( self ):
+        theRecords = list()
+        student = self.fetchRecord()
+        while student:
+            theRecords.append(student)
+            student = self.fetchRecord()
+        return theRecords
+
 class StudentRecord:
     def __init__(self):
         self.idNum = 0
