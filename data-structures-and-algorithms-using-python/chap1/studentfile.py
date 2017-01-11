@@ -1,5 +1,12 @@
 # Implemetation of the StudentFileReader ADT using a text file as the
 # input source in which each field is stored on a sperate line.
+class StudentRecord:
+    def __init__(self):
+        self.idNum = 0
+        self.firstName = None
+        self.lastName = None
+        self.classCode = 0
+        self.gpa = 0.0
 
 class StudentFileReader:
     # Create a new student reader instance.
@@ -75,10 +82,43 @@ class StudentCSVFileReader:
             student = self.fetchRecord()
         return theRecords
 
-class StudentRecord:
-    def __init__(self):
-        self.idNum = 0
-        self.firstName = None
-        self.lastName = None
-        self.classCode = 0
-        self.gpa = 0.0
+class StudentFileWriter:
+    def __init__( self, filename ):
+        self._outputSrc = filename
+        self._outputFile = None
+
+    def open( self ):
+        self._outputFile = open( self._outputSrc, 'w' )
+
+    def close( self ):
+        self._outputFile.close()
+        self._outputFile = None
+
+    def writeRecord( self, student ):
+        s = "%d, %s, %s, %d, %.2f\n" % ( student.idNum, student.firstName, student.lastName, \
+            student.classCode, student.gpa )
+        self._outputFile.write(s)
+
+    def writeAll( self, theRecords ):
+        for student in theRecords:
+            self.writeRecord( student )
+
+class StudentFileTerminalWriter:
+    def __init__( self, filename ):
+        pass
+
+    def open( self ):
+        pass
+
+    def close( self ):
+        pass
+
+    def writeRecord( self, student ):
+        s = "%d, %s, %s, %d, %.2f" % ( student.idNum, student.firstName, student.lastName, \
+            student.classCode, student.gpa )
+        print s
+
+    def writeAll( self, theRecords ):
+        for student in theRecords:
+            self.writeRecord( student )
+

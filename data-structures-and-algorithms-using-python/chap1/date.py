@@ -94,11 +94,14 @@ class Date:
 
     # Returns the date as a string in Gregorian format.
     def __str__(self):
-        return self.asGregorian(divchar = '/')
+        return self.asGregorian('/')
 
     # Returns the date as a string in Gregorian format.
     def __repr__(self):
         return str(self)
+
+    def __hash__(self):
+        return self._julianDay
 
     # Logically compares the two dates.
     def __eq__(self, otherDate):
@@ -190,7 +193,7 @@ class Date:
             return False
         return True
 
-    def asGregorian(divchar = '/'):
+    def asGregorian(self, divchar='/'):
         # similar to the str() method but uses the optional
         # argument divchar as the dividing character 
         # between the three components of the Gregorian date.
