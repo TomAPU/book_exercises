@@ -1,12 +1,10 @@
 from life import LifeGrid
 
+# Define the initial configuration of live cells.
 INIT_CONFIG = [ (0, 0), (0, 1), (1, 0), (1, 2), (3, 2), (3, 4), (5, 4), (5, 6), (7, 6), (7, 8), (9, 8), (9, 10), (11, 10), (11, 12), (12, 11), (12, 12)]
 
-GRID_WIDTH = 5
-GRID_HEIGHT = 5
-
 # Indicate the number of generations
-NUM_GENS = 8
+#NUM_GENS = 8
 
 def main():
     GRID_WIDTH = int( raw_input( "Grid width:" ) )
@@ -15,16 +13,17 @@ def main():
     grid = LifeGrid( GRID_WIDTH, GRID_HEIGHT )
     grid.configure( INIT_CONFIG )
 
+    # Play the game.
     draw( grid )
-    for i in xrange( NUM_GENS ):
+    for i in range( NUM_GENS ):
         evolve( grid )
         draw( grid )
 
 def evolve( grid ):
     liveCells = list()
 
-    for i in xrange( grid.numRows() ):
-        for j in xrange( grid.numCols() ):
+    for i in range( grid.numRows() ):
+        for j in range( grid.numCols() ):
             neighbors = grid.numLiveNeighbors( i, j )
 
             # 1. If a cell is alive and has either two or three live neighbors, the cell remains alive in the next generation. 
@@ -41,9 +40,9 @@ def evolve( grid ):
     grid.configure( liveCells )
 
 def draw( grid ):
-    print 
-    for i in xrange( grid.numRows() ):
-        for j in xrange( grid.numCols() ):
+    print
+    for i in range( grid.numRows() ):
+        for j in range( grid.numCols() ):
             if grid.isLiveCell( i, j):
                 print '@',
             else:
