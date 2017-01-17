@@ -115,21 +115,29 @@ class ReversiGameLogic:
 
         other_player = player % 2 + 1
 
-        # horizontal left
+        # horizontal left,   -->x.....x
         for c in range( col ):
-            if self._grid[ row, c ] == player:
+            if self._grid[row, c] == player:
                 for c2 in range( c+1, col ):
                     self._grid[ row, c2 ] = player
                 break
 
-        # horizontal right
+        # horizontal right, x...x<---
         for c in range( self._grid.numCols() - 1, col, -1 ):
-            if self._grid[ row, c ] == player:
+            if self._grid[row, c] == player:
                 for c2 in range( col+1, c ):
                     self._grid[ row, c2 ] = player
                 break
 
         # vertical top
+        #  |
+        #  |
+        #  v
+        #  x
+        #  .
+        #  .
+        #  .
+        #  x
         for r in range( row ):
             if self._grid[ r, col ] == player:
                 for r2 in range( r+1, row ):
@@ -137,13 +145,31 @@ class ReversiGameLogic:
                 break
 
         # vertical bottom
+        #  x
+        #  .
+        #  .
+        #  .
+        #  x
+        #  ^
+        #  |
+        #  |
         for r in range( self._grid.numRows() - 1, row, -1 ):
             if self._grid[ r, col ] == player:
                 for r2 in range( row+1, r ):
                     self._grid[ r2, col ] = player
                 break
 
+
         # diagonal top left
+        # row up, col up
+        # \
+        #  \
+        #   v
+        #    x
+        #     .
+        #      .
+        #       .
+        #        x
         if row >= col:
             start_row = row-col
             for c in range(col):
@@ -160,15 +186,36 @@ class ReversiGameLogic:
                     break
 
         # diagonal  bottom right
+        # 
+        # x
+        #  .
+        #   .
+        #    .
+        #     x
+        #      ^
+        #       \
+        #        \
         if row >= col:
             for r in range(self._grid.numRows()-1, row, -1):
                 if self._grid[r, col+(r-row)] == player:
-                    for r2 in range(r+1, self._grid.numRows()-1):
+                    for r2 in range(row+1, r):
                         self._grid[r2, col+(r2-row)] = player
+                    break
+        else:
+            for c in range(self._grid.numCols()-1, col, -1):
+                if self._grid[row+(c-col), c] == player:
+                    for c2 in range(col+1, c):
+                        self._grid[row+(c2-col), c2] = player
                     break
 
         # diagonal  bottom left
-        # col-> up, row -> down
+        # col-> +, row -> -
+        #        x
+        #       .
+        #      .
+        #    .
+        #   x
+        #  ^
         if self._grid.numCols()-col >= row:
             for r in range(row):
                 if self._grid[r, col+(r-row)] == player:
@@ -197,14 +244,56 @@ class ReversiGameLogic:
                         self._grid[row+(col-c2), c2] = player
                     break
 
+        self._grid[row, col] = player
+        self._curr_turn = other_player
+
     def draw( self ):
+        for c in range( self._grid.numCols()+1 ):
+            print c,
+        print
         for r in range( self._grid.numRows() ):
+            print r+1,
             for c in range( self._grid.numCols() ):
                 if self._grid[r, c] == ReversiGameLogic.PLAYER1:
                     print ReversiGameLogic.PLAYER1_CHAR,
                 elif self._grid[r, c] == ReversiGameLogic.PLAYER2:
                     print ReversiGameLogic.PLAYER2_CHAR,
                 else:
-                    print '_',
+                    print '-',
             print
         print
+
+
+if __name__ == '__main__':
+    gl = ReversiGameLogic()
+    turn = gl.whoseTurn()
+    assert turn == ReversiGameLogic.PLAYER1, "assert turn == ReversiGameLogic.PLAYER1"
+
+    """
+    while True:
+        gl.draw()
+
+        turn = gl.whoseTurn()
+        if turn == 0:
+            win = gl.getWinner()
+            print 'Winner is Player %d' % win+1
+            break
+
+        if turn == ReversiGameLogic.PLAYER1:
+            play = '#'
+        else:
+            play = '@'
+
+        row_col = raw_input( "Player %c place at(Enter to exit, example row,col): " % play)
+        if not row_col:
+            exit(0)
+        row_col = row_col.split(',')
+        # 1 based
+        row = int( row_col[0] )-1
+        col = int( row_col[1] )-1
+        if gl.isLegalMove( row, col ):
+            gl.makeMove( row, col )
+        else:
+            print 'Move illegal, try again'
+
+    """

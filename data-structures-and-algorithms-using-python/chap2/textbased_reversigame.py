@@ -19,6 +19,8 @@ while True:
         play = '@'
 
     row_col = raw_input( "Player %c place at(Enter to exit, example row,col): " % play)
+    if not row_col:
+        exit(0)
     row_col = row_col.split(',')
     # 1 based
     row = int( row_col[0] )-1
