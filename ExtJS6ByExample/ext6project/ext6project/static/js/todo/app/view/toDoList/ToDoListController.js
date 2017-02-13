@@ -1,6 +1,6 @@
 Ext.define('ToDo.view.toDoList.ToDoListController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.todoList',
+    alias: 'controller.todolist',
     views: ['ToDo.view.toDoList.ToDoList'],
 
     init: function () {

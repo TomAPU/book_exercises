@@ -11,4 +11,6 @@ urlpatterns = [
         view=views.IndexView.as_view(),
         name='index'
     ),
+    url(r'^tasks/$', views.TodoList.as_view()),
+    url(r'^tasks/(?P<pk>[0-9]+)/$', views.TodoDetail.as_view()),
 ]

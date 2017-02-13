@@ -16,7 +16,7 @@ Ext.define('ToDo.view.main.Main', {
             },
             items: [
                 {
-                    xtype: 'app-todoList',
+                    xtype: 'app-todolist',
                     flex:1,
                     maxWidth: 700,
                     cls: 'main'

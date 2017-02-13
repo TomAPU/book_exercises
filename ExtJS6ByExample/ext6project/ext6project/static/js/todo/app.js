@@ -1,4 +1,3 @@
-
 Ext.application({
     name: 'ToDo',    
     appFolder: '/static/js/todo/app',

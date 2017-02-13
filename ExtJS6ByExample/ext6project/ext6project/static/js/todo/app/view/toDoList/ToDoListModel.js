@@ -1,6 +1,6 @@
 Ext.define('ToDo.view.toDoList.ToDoListModel', {
     extend: 'Ext.app.ViewModel',
-    alias: 'viewmodel.todoList',
+    alias: 'viewmodel.todolist',
     stores: {
         todos: {
             fields: [
@@ -15,7 +15,7 @@ Ext.define('ToDo.view.toDoList.ToDoListModel', {
             }],
             proxy: {
                 type: 'rest',
-                url: 'tasks',
+                url: 'tasks/',
                 reader: {
                     type: 'json',
                 },

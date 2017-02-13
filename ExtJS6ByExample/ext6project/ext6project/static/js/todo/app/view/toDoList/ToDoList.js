@@ -7,13 +7,13 @@ Ext.define('ToDo.view.toDoList.ToDoList', {
         'ToDo.view.toDoList.ToDoListModel'
     ],
        
-    xtype: 'app-todoList',
-    controller: 'todoList',
+    xtype: 'app-todolist',
+    controller: 'todolist',
 
     /* View model of the view */
 
     viewModel: {
-        type: 'todoList'
+        type: 'todolist'
     },
 
     items: [{
