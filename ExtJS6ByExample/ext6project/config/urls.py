@@ -22,6 +22,8 @@ urlpatterns = [
     # Your stuff: custom urls includes go here
     url(r'^calculator/', include('ext6project.calculator.urls',
         namespace='calculator')),
+    url(r'^todo/', include('ext6project.todo.urls',
+        namespace='todo')),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
