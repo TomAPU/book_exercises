@@ -1,12 +1,16 @@
 # Folder
 
 -app
+  -store
+    ContactList.js
+
   -view
     -main
       Main.js
-    -ToDoList
-      ToDoList.js
-      ToDoListController.js
-      ToDoListModel.js
+    -ContactList
+      add.js
+      ContactList.js
+      ContactListController.js
+      ContactListModel.js
   app.js
   index.html

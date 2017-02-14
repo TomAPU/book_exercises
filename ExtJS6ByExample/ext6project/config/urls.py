@@ -24,6 +24,8 @@ urlpatterns = [
         namespace='calculator')),
     url(r'^todo/', include('ext6project.todo.urls',
         namespace='todo')),
+    url(r'^companydirectory/', include('ext6project.companydirectory.urls',
+        namespace='companydirectory')),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

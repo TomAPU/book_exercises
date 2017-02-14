@@ -49,6 +49,7 @@ LOCAL_APPS = (
     # Your stuff: custom apps go here
     'rest_framework',
     'ext6project.todo.apps.TodoConfig',
+    'ext6project.companydirectory.apps.CompanydirectoryConfig',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

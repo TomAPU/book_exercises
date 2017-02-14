@@ -17,7 +17,7 @@ class TodoSerializer(serializers.Serializer):
         """
         Update and return an existing `Todo` instance, given the validated data.
         """
-        instance.desc = validated_data.get('desc', instance.title)
+        instance.desc = validated_data.get('desc', instance.desc)
         instance.done = validated_data.get('done', instance.done)
         instance.save()
         return instance
