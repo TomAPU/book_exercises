@@ -6,7 +6,7 @@ from .serializers import SnippetSerializer
 
 # A view that supports listing all the existing snippets, or creating a new snippet.
 @api_view(['GET', 'POST'])
-def snippet_list(request):
+def snippet_list(request, format=None):
     """
     List all code snippets, or create a new one.
     """
@@ -25,7 +25,7 @@ def snippet_list(request):
 # A view that corresponds to an individual snippet, can be used to
 # retrieve, update or delete the snippet.
 @api_view(['GET', 'PUT', 'DELETE'])
-def snippet_detail(request, pk):
+def snippet_detail(request, pk, format=None):
     """
     Retrieve, update or delete a code snippet.
     """
