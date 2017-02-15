@@ -24,7 +24,8 @@ router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
+    url(r'^snippets/', include('tutorial.snippets.urls')),
+    url(r'^quickstart/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')), # browsable API  login URL
     url(r'^admin/', admin.site.urls),
 ]
