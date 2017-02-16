@@ -48,7 +48,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASS': [
         'rest_framework.permissions.IsAdminUser', # 只允许管理员访问 API
     ],
-    'PAGE_SIZE': 10 # 开启分页
+    #'PAGE_SIZE': 10 # 开启分页
 }
 
 MIDDLEWARE = [
