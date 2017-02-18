@@ -1,6 +1,6 @@
 Ext.define('Contact', {
     extend: 'Ext.data.Model',
-    fields: ['fname', 'lname', 'email', 'address', 'city', 'state', 'phone', 'type']
+    fields: ['first_name', 'last_name', 'email', 'address','city', 'state','phone','work_type']
 });
 
 Ext.define('CD.store.ContactList', {
@@ -8,13 +8,12 @@ Ext.define('CD.store.ContactList', {
     storeId: 'contactList',
     model: 'Contact',
     pageSize: 5,
-    proxy: {
+proxy: {
         type: 'rest',
-        url: '/companydirectory/contactlist/', // url that will load data 
-                                                // with respect to start and limit params
+        url: '/companydirectory/employees/', // url that will load data with respect to start and limit params
         reader: {
             type: 'json',
-            rootProperty: 'data',
+            rootProperty: 'results',
             totalProperty: 'total'
         }
     }

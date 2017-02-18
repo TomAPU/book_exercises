@@ -1,21 +1,12 @@
-from django.shortcuts import render
 from django.views.generic.base import TemplateView
-from braces.views import JSONResponseMixin
-from django.views.generic.list import ListView
-from django.views.generic.detail import SingleObjectMixin, DetailView
 
 from .models import Employee
 
 from .serializers import EmployeeSerializer
-from rest_framework import generics
+from rest_framework import viewsets
 
 
-class EmployeeList(generics.ListCreateAPIView):
-    queryset = Employee.objects.all()
-    serializer_class = EmployeeSerializer
-
-
-class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView):
+class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
 

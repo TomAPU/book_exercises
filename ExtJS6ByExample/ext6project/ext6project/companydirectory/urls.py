@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
+from django.conf.urls import url, include
+from rest_framework.routers import DefaultRouter
 
 from . import views
+
+router = DefaultRouter()
+router.register(r'employees', views.EmployeeViewSet)
 
 urlpatterns = [
     url(
@@ -11,6 +15,5 @@ urlpatterns = [
         view=views.IndexView.as_view(),
         name='index'
     ),
-    url(r'^contactlist/$', views.EmployeeList.as_view()),
-    #url(r'^tasks/(?P<pk>[0-9]+)/$', views.EmployeeDetail.as_view()),
+    url(r'^', include(router.urls)),
 ]

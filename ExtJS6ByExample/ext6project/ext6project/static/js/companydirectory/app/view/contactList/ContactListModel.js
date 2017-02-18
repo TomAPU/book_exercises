@@ -1,6 +1,6 @@
-Ext.define('CD.view.contactlist.ContactListModel', {
+Ext.define('CD.view.contactList.ContactListModel', {
     extend: 'Ext.app.ViewModel',
-    alias: 'viewmodel.contactlist',
+    alias: 'viewmodel.contactList',
     stores: {
         todos: {
             storeId: 'todosStore',
