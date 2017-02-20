@@ -44,3 +44,5 @@ Ext.define('PE.store.Albums', {
         ]
     }
 });
+
+Ext.create('PE.store.Albums');

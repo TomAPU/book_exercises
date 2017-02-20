@@ -15,5 +15,5 @@ urlpatterns = [
         view=views.IndexView.as_view(),
         name='index'
     ),
-    url(r'^pics/', include(router.urls)),
+    url(r'^', include(router.urls)),
 ]

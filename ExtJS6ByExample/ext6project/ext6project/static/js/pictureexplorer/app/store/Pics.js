@@ -12,6 +12,8 @@ Ext.define('PE.store.Pics', {
         url: '/pictureexplorer/pics/', // url that will load data with
                                 // respect to start and limit params
         reader: {
+            totalProperty: 'count',
+            rootProperty: 'results',
             type: 'json'
         }
     }

@@ -4,8 +4,7 @@ Ext.define('PE.view.pics.Pics', {
     // Marks these are required classes to be loaded before
     // loading this view
     requires: [ 
-        'PE.view.pics.PicsController',
-        'PE.store.Albums',
+        'PE.view.pics.PicsController'
     ],
 
     xtype: 'app-pics',
@@ -47,7 +46,7 @@ Ext.define('PE.view.pics.Pics', {
                             ]
                         }
                     ]
-                }/*,
+                },
                 {
                     xtype: 'dataview',
                     reference: 'picsList',
@@ -65,7 +64,7 @@ Ext.define('PE.view.pics.Pics', {
                     overItemCls: 'x-item-over',
                     itemSelector: 'div.thumb',
                     emptyText: 'No images to display'
-                }*/
+                }
             ]
         }
     ]
