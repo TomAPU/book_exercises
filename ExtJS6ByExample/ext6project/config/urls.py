@@ -26,6 +26,8 @@ urlpatterns = [
         namespace='todo')),
     url(r'^companydirectory/', include('ext6project.companydirectory.urls',
         namespace='companydirectory')),
+    url(r'^pictureexplorer/', include('ext6project.pictureexplorer.urls',
+        namespace='pictureexplorer')),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -50,6 +50,7 @@ LOCAL_APPS = (
     'rest_framework',
     'ext6project.todo.apps.TodoConfig',
     'ext6project.companydirectory.apps.CompanydirectoryConfig',
+    'ext6project.pictureexplorer.apps.PictureexplorerConfig',
 )
 
 REST_FRAMEWORK = {
