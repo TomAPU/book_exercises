@@ -1,6 +1,6 @@
 import { Angular2HelloWorldPage } from './app.po';
 
-describe('angular2-hello-world App', function() {
+describe('angular2-hello-world App', () => {
   let page: Angular2HelloWorldPage;
 
   beforeEach(() => {
