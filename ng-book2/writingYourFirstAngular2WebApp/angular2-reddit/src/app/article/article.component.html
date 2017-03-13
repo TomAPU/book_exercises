@@ -20,6 +20,7 @@
   <!--
     绑定的回调函数 voteUp, voteDown 也是在组件类 ArticleComponent 中定义
   -->
+  <div class="meta">({{ article.domain() }})</div>
   <ul class="ui big horizontal list voters">
     <li class="item">
       <a href (click)="voteUp()">

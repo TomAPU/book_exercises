@@ -22,7 +22,14 @@
   </button>
 </form>
 
+<!--
+  articles 是定义在 AppComponent 中的 Article 数组，
+  anarticle 是由 NgFor 创建的局部变量，
+  [article] 是 ArticleComponent 中的 Input 参数
+-->
 <div class="ui grid posts">
-  <app-article>
+  <app-article
+    *ngFor="let anarticle of articles"
+    [article]="anarticle">
   </app-article>
 </div>

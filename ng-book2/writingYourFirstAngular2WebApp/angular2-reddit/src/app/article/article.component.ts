@@ -18,14 +18,6 @@ export class ArticleComponent implements OnInit {
   // 这些属性可以在组件模板中引用
   @Input() article: Article;
 
-  constructor() {
-      this.article = new Article(
-          'Angular 2',
-          'http://angular.io',
-          10
-      );
-  }
-
   // 这些函数可以在组件模板中引用
   voteUp(): boolean {
       this.article.voteUp();
