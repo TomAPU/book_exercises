@@ -57,8 +57,8 @@ System.register(['@angular/core', "@angular/platform-browser", "@angular/platfor
                         host: { class: 'ui small image' },
                         inputs: ['product'],
                         // 这里 img 的 src 是通过 [src] 来设置的！
-                        // 如果 <img src="{{ product.imageUrl }}"> 写是错误的，
-                        // 这里因为有时浏览器会在 Angular 运行前加载了模板，而
+                        // 如果像 <img src="{{ product.imageUrl }}"> 写是错误的，
+                        // 这是因为有时浏览器会在 Angular 运行前加载了模板，而
                         // 那时图片的 URL 是 "{{ product.imageUrl }}"，从而出现
                         // 404 错误。
                         // 故一定要用 [src] 属性来设置，让 Angular 来替换相应的值
@@ -115,7 +115,7 @@ System.register(['@angular/core', "@angular/platform-browser", "@angular/platfor
                         inputs: ['product'],
                         // 为组件的匹配标签添加 "item" 类
                         host: { 'class': 'item' },
-                        // 模板中要见，该组件调用了 3 个子组件
+                        // 模板中可见，该组件调用了 3 个子组件
                         template: "\n  <product-image [product]=\"product\"></product-image>\n  <div class=\"content\">\n    <div class=\"header\">{{ product.name }}</div>\n    <div class=\"meta\">\n      <div class=\"product-sku\">SKU #{{ product.sku }}</div>\n    </div>\n    <div class=\"description\">\n      <product-department [product]=\"product\"></product-department>\n    </div>\n  </div>\n  <price-display [price]=\"product.price\"></price-display>\n  "
                     }), 
                     __metadata('design:paramtypes', [])
@@ -159,11 +159,11 @@ System.register(['@angular/core', "@angular/platform-browser", "@angular/platfor
                         // 在外部组件的模板中，可用 (outputevent)="action" 的语法来绑定。
                         // 内置的事件有 click, dbl-click, mousedown 等，而创建自定义事件需要做 3 件事：
                         //   1. 在 @Component 的 outputs 中指定事件名，如 'onProductSelected'
-                        //   2. 事件名 'onProductSelected' 对应组件类时的一个属性 onProductSelected，
+                        //   2. 事件名 'onProductSelected' 对应组件类中的一个属性 onProductSelected，
                         //      该属性需要设置为 EventEmitter 类型，如本例中为 
                         //      `onProductSelected: EventEmitter<Product>;`，表示产生该事件时，同时抛出一个
                         //      Product 对象。并对其初始化，本例中是在构造器中进行初始化。
-                        //   3. 在适时的时候，通过 EventEmitter.emit 发送事件，如本例中：
+                        //   3. 在适当的时候，通过 EventEmitter.emit 发送事件，如本例中：
                         //       `this.onProductSelected.emit(product);`
                         //
                         // EventEmitter 对象有助于我们实现观察者模式，即它能维护一组注册者，并向他们发送事件。
@@ -202,12 +202,12 @@ System.register(['@angular/core', "@angular/platform-browser", "@angular/platfor
                 InventoryApp = __decorate([
                     core_1.Component({
                         // selector 定义该组件在 HTML 中的匹配标签。它类似于 CSS 或 XPath 选择子。
-                        // 之后，可以有 HTML 中用 <inventory-app></inventory-app> 来调用组件;
+                        // 之后，可以在 HTML 中用 <inventory-app></inventory-app> 来调用组件;
                         // 不过也可以用 div 和属性的方式调用，如 <div inventory-app></div>
                         selector: 'inventory-app',
                         // 模板也可以通过 templateUrl 来定义
                         // 本组件调用了 ProductsList 来呈现所有的产品信息。
-                        // 在调用 ProductsList 组件时，用到了组件的一个关键特性：输入来输出。
+                        // 在调用 ProductsList 组件时，用到了组件的一个关键特性：输入和输出。
                         // 数据通过输入绑定 (input bindings) 流入你的组件，而你的组件中的事件
                         // 则通过输出绑定 (output bindings) 流出。
                         // 输入 Inputs:
@@ -218,7 +218,7 @@ System.register(['@angular/core', "@angular/platform-browser", "@angular/platfor
                         //     左侧的 onProductSelected 是 ProductsList 组件触发的事件，
                         //     右侧的 productWasSelected 是定义在本组件中的回调函数
                         //     而 $event 是 ProductsList 组件在产生 onProductSelected 事件时抛出的事件值
-                        template: "\n  <div class=\"inventory-app\">\n    <products-list \n      [productList]=\"products\"  <!-- input -->\n      (onProductSelected)=\"productWasSelected($event)\"> <!-- output -->\n    </products-list>\n  </div>\n  "
+                        template: "\n  <div class=\"inventory-app\">\n    <products-list \n      [productList]=\"products\"\n      (onProductSelected)=\"productWasSelected($event)\">\n    </products-list>\n  </div>\n  "
                     }), 
                     __metadata('design:paramtypes', [])
                 ], InventoryApp);
