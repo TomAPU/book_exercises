@@ -13,7 +13,7 @@
     <input name="link" #newlink>
   </div>
   <!--
-    属性 (click) 定义按钮的单击回调函数，该函数 addArticle 定义在当前组件的  AppComponet 类中 。
+    属性 (click) 定义按钮的单击回调函数，该函数 addArticle 定义在当前组件的  ArticleComponet 类中 。
     回调函数中的 newtitle, newlink 等从上面的输入域标签 resolve 过来的，如 resolve(#newtitle)。
   -->
   <button (click)="addArticle(newtitle, newlink)"
@@ -29,7 +29,7 @@
 -->
 <div class="ui grid posts">
   <app-article
-    *ngFor="let anarticle of articles"
+    *ngFor="let anarticle of sortedArticles()"
     [article]="anarticle">
   </app-article>
 </div>
