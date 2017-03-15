@@ -7,7 +7,7 @@ import {
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
-import {
+import {  // 加载 form 的相应模块
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
@@ -71,6 +71,10 @@ class FormsDemoApp {
     DemoFormWithEvents,
     DemoFormNgModel
   ],
+  // 将 FormsModule 和 ReactiveFormsModule 加入本应用的依赖中，
+  // 从而确保我们在模板中可以使用下列的指令：
+  //    + ngModel 和 NgForm （来自 FormsModule）
+  //    + formControl 和 ngFormGroup （来自 ReactiveFormsModule）
   imports: [
     BrowserModule,
     FormsModule,
