@@ -1,3 +1,6 @@
+// ngModel 指令用于将数据模型绑定到表单中。
+// Angular 2 中的数据流一般是单向的（自上而下），
+// 但是 ngModel 指令实现的是双向绑定。
 import { Component } from '@angular/core';
 import {
   FormBuilder,
@@ -21,6 +24,11 @@ import {
 
       <div class="field">
         <label for="productNameInput">Product Name</label>
+        <!--
+        由于 [] 表示输入，而 () 表示输出，
+        这里 [(ngModel)] 很容易看出是双向绑定，
+        实现将该 input 项的值与组件属性 productName 的值进行同步绑定
+        -->
         <input type="text"
                id="productNameInput"
                placeholder="Product Name"
