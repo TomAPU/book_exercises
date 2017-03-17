@@ -31,6 +31,8 @@ export class MoreHTTPRequests {
     this.loading = true;
     this.http.post(
       'http://jsonplaceholder.typicode.com/posts',
+
+      // 将 参数 Object 对象先转成 JSON 字符串
       JSON.stringify({
         body: 'bar',
         title: 'foo',
@@ -52,6 +54,7 @@ export class MoreHTTPRequests {
   }
 
   makeHeaders(): void {
+    // 添加一个新的 Header
     let headers: Headers = new Headers();
     headers.append('X-API-TOKEN', 'ng-book');
 

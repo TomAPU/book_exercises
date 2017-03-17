@@ -36,7 +36,7 @@ export class SimpleHTTPComponent {
     // 一个 Observable 对象，可以通过 subscribe
     // 添加侦听者。subscribe(successFn, failureFn, completedFn)。
     // Http.request 返回数据后，会发送一个 Response 对象，
-    // 我们可以在 subscribe 的回调函数中进处理。
+    // 我们可以在 subscribe 的回调函数中进行处理。
     this.http.request('http://jsonplaceholder.typicode.com/posts/1')
       .subscribe((res: Response) => {
         this.data = res.json();

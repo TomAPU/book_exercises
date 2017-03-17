@@ -84,7 +84,7 @@ export class YouTubeService {
     return this.http.get(queryUrl)
       .map((response: Response) => {
         // 这里的 `(<any>Response.json()).items`：告诉 TypeScrit 这里无需进行严格的类型检查
-        // 在使用 JSON API 时，API 返回通常不会有类型定义，
+        // 在使用 JSON API 时，API 返回不会有类型定义，
         // 因此 TypeScript 不会知道返回的应用中会有 items 键，
         // 从而会抛出警告等信息
         return (<any>response.json()).items.map(item => {
@@ -101,8 +101,9 @@ export class YouTubeService {
 }
 
 // 将这些值做成 injectable，我们使用 {provide: ..., useValue: ...} 语法。
-// 这里我们指定将可注入的 YOUTUBE_API_KEY 绑定到值 YOUTUBE_API_KEY（YOUTUBE_API_URL 也一样），将可注入的 YouTubeService 绑定到类 YouTubeService。
-// 所有我们将 youTubeServiceInjectables 导出了，所以可以在主入口文件 app.ts 等中使用。
+// 这里我们指定将可注入的 YOUTUBE_API_KEY 绑定到值 YOUTUBE_API_KEY（YOUTUBE_API_URL 也一样），
+// 将可注入的 YouTubeService 绑定到类 YouTubeService。
+// 将 youTubeServiceInjectables 导出后，就可以在主入口文件 app.ts 等中使用。
 export var youTubeServiceInjectables: Array<any> = [
   {provide: YouTubeService, useClass: YouTubeService},
   {provide: YOUTUBE_API_KEY, useValue: YOUTUBE_API_KEY},
@@ -113,7 +114,7 @@ export var youTubeServiceInjectables: Array<any> = [
  * SearchBox 显示搜索框，并基于搜索结果发送出事件。
  * 它是 UI 和 YouTubeService 之间的中介。
  * 它实现：
- *   1. 监听 input 上的 keyup 事件，向 YouTubeService 提供一次查询
+ *   1. 监听 input 上的 keyup 事件，向 YouTubeService 请求查询
  *   2. 当加载时发送出 loading 事件
  *   3. 当返回查询结果时发送出 results 事件
  */
@@ -126,34 +127,51 @@ export var youTubeServiceInjectables: Array<any> = [
   `
 })
 export class SearchBox implements OnInit {
+  // 该类实现了 OnInit 接口，该接口中定义了 ngOnInit 方法，
+  // 在里面可以做一些初始化任务（因为调用 constructor 时像组件的 input 元素
+  // 等都还不能操作），只能在 ngOnInit 里操作。
+    //
+    // 定义及初始化 2 个输出事件
   loading: EventEmitter<boolean> = new EventEmitter<boolean>();
   results: EventEmitter<SearchResult[]> = new EventEmitter<SearchResult[]>();
 
+  // 注入了 2 个对象，其中 el 就是该组件关联的元素，类型是 ElementRef，
+  // 它是 Angular 对 HTML 元素的一个封装对象。
   constructor(private youtube: YouTubeService,
               private el: ElementRef) {
   }
 
   ngOnInit(): void {
-    // convert the `keyup` event into an observable stream
-    Observable.fromEvent(this.el.nativeElement, 'keyup')
-      .map((e: any) => e.target.value) // extract the value of the input
-      .filter((text: string) => text.length > 1) // filter out if empty
-      .debounceTime(250)                         // only once every 250ms
-      .do(() => this.loading.next(true))         // enable loading
-      // search, discarding old events if new input comes in
-      .map((query: string) => this.youtube.search(query))
-      .switch()
-      // act on the return of the search
-      .subscribe(
-        (results: SearchResult[]) => { // on sucesss
-          this.loading.next(false);
-          this.results.next(results);
+      // 当然我们也可以手动侦听 input 框的 keyup 事件，不过由于它
+      // 要完成下面的一系列操作，手动侦听有点难度：
+      //   1. 过滤掉所有的空或很短的查询
+      //   2. "debounce"，不在用户输入每个字符时都进行查询请求，只在用户
+      //     输入后暂停一段时间后才去查询
+      //   3. 如果用户进行了新的查询，那么只显示新的查询内容
+      //
+      // 因此，将 `keyup` 事件转成 Rx 的 Observable 流会更简单。
+      // 使用 Rx.Observable.fromEvent 进行转换：
+    Observable.fromEvent(this.el.nativeElement, 'keyup')  // this.el.nativeElement 就是本组件关联的 DOM 对象，
+                                                          //转化成 keyup 事件流后，可以对流进行各种操作。
+      .map((e: any) => e.target.value) // 流中的是 keyup 事件 e，e.target 就是事件关联的 input 元素，
+                                        //这里的作用是将事件流转成 input 值的流
+      .filter((text: string) => text.length > 1) // 过滤掉 input 值流中的空值
+      .debounceTime(250)                         // 只有用户输入后暂停 250ms 后才进行查询
+      .do(() => this.loading.next(true))        // `do` 操作是对流中的每个事件都进行该操作，但不对流本身进行修改，
+                                                //这里是让 this.loading(EventEmitter对象）发送 true 值作为下一个事件，用来显示 'loading...'
+      .map((query: string) => this.youtube.search(query)) // 为流中的每个查询值进行实际的查询操作
+      .switch() // 表示当有新查询时，只关注最新的查询，忽略旧的查询
+      // 查询后返回的是 SearchResult[]，因此现在是一个 SearchResult[] 流
+      .subscribe( // 注册侦听流中的每个 SearchResult[] 返回值
+        (results: SearchResult[]) => { // 流中出现一个正常的 SearchResult[] 时调用
+          this.loading.next(false);  // 发送 false 作为下一个事件，表示隐藏 'loading...' 显示
+          this.results.next(results); // 发送 SearchResult[] 作为下一个事件
         },
-        (err: any) => { // on error
+        (err: any) => { // 当流中出现一个错误时调用
           console.log(err);
           this.loading.next(false);
         },
-        () => { // on completion
+        () => { // 当流中的某个事件操作完成时都会调用
           this.loading.next(false);
         }
       );
@@ -161,8 +179,10 @@ export class SearchBox implements OnInit {
   }
 }
 
+
+// 该组件显示单个查询结果
 @Component({
-  inputs: ['result'],
+  inputs: ['result'], // 定义输入域，类型为 SearchResult
   selector: 'search-result',
   template: `
    <div class="col-sm-6 col-md-3">
@@ -183,12 +203,21 @@ export class SearchResultComponent {
   result: SearchResult;
 }
 
+
+// 该组件用来整合所有的组件
 @Component({
   selector: 'youtube-search',
+
   template: `
   <div class='container'>
       <div class="page-header">
         <h1>YouTube Search
+
+          <!-- 
+           loadingGif 变量来自程序中的 `require` 语句，
+           这是 webpack 的图片加载功能（见 https://github.com/tcoopman/image-webpack-loader）
+           这里当本地变量 'loading' 为 true 时会显示该图片
+          -->
           <img
             style="float: right;"
             *ngIf="loading"
@@ -198,6 +227,13 @@ export class SearchResultComponent {
 
       <div class="row">
         <div class="input-group input-group-lg col-md-12">
+          <!--
+            绑定SerarchBox 的输出：
+              1. `(loading)="loading = $event"` 表示当 SearchBox 出现 loading 事件时，
+                会运行 `loading=$event` 表达式，其中的 $event 是事件发送出的值。
+              2. `(results)="updateResults($event)"` 表示当 SearchBox 出现 results 事件时，
+                运行组件的 updateResults 方法，其中的 $event 是事件发送出的值 (SearchResult[] 类型）
+          -->
           <search-box
              (loading)="loading = $event"
              (results)="updateResults($event)"
