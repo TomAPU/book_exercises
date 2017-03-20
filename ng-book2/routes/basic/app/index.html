@@ -1,9 +1,19 @@
 <!doctype html>
 <html>
   <head>
+    <!--
+      base 标签以前是用来告诉浏览器，如何对用相对路径表示的
+      图片等其它资源进行加载。
+      而 Angular Router 也依赖该标签来构建路由，例如，如果
+      我们有个路由的路径是 /hello，而 base 元素定义为 href="/app"，
+      那么该路由的实现路径将为 "/app/#/hello"。
+    -->
     <base href="/">
     <title>ng-book 2: Angular 2 Router</title>
 
+    <!--
+      这里的 htmlWebpackPlugin 来自 "webpack module bunder: https://webpack.github.io/，webpack 是一个打包资源文件的工具。
+    -->
     {% for (var css in o.htmlWebpackPlugin.files.css) { %}
       <link href="{%=o.htmlWebpackPlugin.files.css[css] %}" rel="stylesheet">
     {% } %}
