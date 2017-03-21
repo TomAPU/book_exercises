@@ -1,6 +1,5 @@
-/*
- * Angular
- */
+// 该组件当用户登录后显示用户信息和退出链接，
+// 用户未登录时显示登录表单
 import {Component} from '@angular/core';
 
 /*
@@ -15,6 +14,7 @@ import {AuthService} from 'services/AuthService';
     {{ message }}
   </div>
 
+  <!-- 在用户未登录时显示 -->
   <form class="form-inline" *ngIf="!authService.getUser()">
     <div class="form-group">
       <label for="username">User:</label>
@@ -31,6 +31,7 @@ import {AuthService} from 'services/AuthService';
     </a>
   </form>
 
+  <!-- 在用户登录后显示 -->
   <div class="well" *ngIf="authService.getUser()">
     Logged in as <b>{{ authService.getUser() }}</b>
     <a href (click)="logout()">Log out</a>

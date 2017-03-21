@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
-import { // 加载路由的相关模式
+import { // 加载路由的相关模块
   RouterModule,
   Routes
 } from '@angular/router';
@@ -28,12 +28,12 @@ require('css/styles.css');
 // 在模板中使用 router-outlet 元素定义路由内容的放置位置，
 // 即路由链接的内容都会呈现在这个元素内
 //
-// 使用 <a href="/#/home">Home</a> 也可以定义链接，但是这样
+// 使用 <a href="/#/home">Home</a> 也可以定义链接，但是这样的话，
 // 当点击链接时，页面会重加载，不适合在 SPA 中使用
 // Angular2 中使用 [routerLink] 指令来建立路由链接，这样创建的
 // 链接点击时页面不会重加载。
 // [routerLink] 指令右侧的表达式是一个数据，其中第一个元素指的是
-// 对应的路由路径，其中的元素可以是子元素，路由参数等。
+// 对应的路由路径，其它的元素可以是子元素，路由参数等。
 @Component({
   selector: 'router-app',
   template: `

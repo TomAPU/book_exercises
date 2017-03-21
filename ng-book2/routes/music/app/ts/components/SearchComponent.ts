@@ -85,7 +85,7 @@ export class SearchComponent implements OnInit {
     // this.route.queryParams 和 this.route.params 不同：
     // + this.route.queryParams 将 URL 参数组织成对象，
     //   例如在 URL http://localhost/#/search?query=cats&order=asc 中，
-    //   从而 queryParams['query'] 值为 'cats'
+    //   queryParams['query'] 值为 'cats'
     // + this.route.params 将路由的参数组织成对象
     this.route
       .queryParams
@@ -108,8 +108,8 @@ export class SearchComponent implements OnInit {
   // 也会进行搜索操作
   submit(query: string): void {
     // 手动告诉路由，导航到 search 路由，并提供了一个 query 参数，
-    // 然后再执行实现的搜索。
-    // 这种方式有个很大的好处：当浏览器重装加载页面时，可以看到相同的搜索结果。
+    // 然后再执行实际的搜索。
+    // 这种方式有个很大的好处：当浏览器重新加载页面时，可以看到相同的搜索结果。
       // 这就是 "pesisting the search term on the URL"
     this.router.navigate(['search'], { queryParams: { query: query } })
       .then(_ => this.search() );
@@ -127,7 +127,7 @@ export class SearchComponent implements OnInit {
       .subscribe((res: any) => this.renderResults(res));
   }
 
-  // 我们将 results 定义为了组件属性，当它的值有到时候后，
+  // 我们将 results 定义为了组件属性，当它的值有修改后，
   // Angular 会自动为我们更新与其关联的视图
   renderResults(res: any): void {
     this.results = null;

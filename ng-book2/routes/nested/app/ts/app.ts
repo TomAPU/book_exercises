@@ -32,6 +32,7 @@ require('css/styles.css');
 
 @Component({
   selector: 'router-app',
+
   template: `
   <div class="page-header">
     <div class="container">
