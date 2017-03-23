@@ -33,7 +33,8 @@ class DiValueApp {
   }
 }
 
-const isProduction: boolean = false;
+// 可以通过 WebPack 或 .env 文件来定义这些环境变量值
+const isProduction: boolean = true;
 
 @NgModule({
   declarations: [ DiValueApp ],
@@ -41,6 +42,8 @@ const isProduction: boolean = false;
   bootstrap: [ DiValueApp ],
   providers: [
     { provide: ApiService, useClass: ApiService },
+
+    // 根据环境变量设置不同的值
     {
       provide: API_URL,
       useValue: isProduction ?

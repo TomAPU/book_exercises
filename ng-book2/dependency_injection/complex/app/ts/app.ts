@@ -41,8 +41,13 @@ class DiSampleApp {
   }
 
   useInjectors(): void {
+    // 创建自己的 Injector，它包含 ViewPortService 和
+    // 另一个可注入对象。
     let injector: any = ReflectiveInjector.resolveAndCreate([
       ViewPortService,
+
+      // 该可注入对象 (injectable) 的标签为 'OtherSizeService'
+      // 它的工厂方法在每次调用  useInjectors 方法时都会运行。
       {
         provide: 'OtherSizeService',
         useFactory: (viewport: any) => {
