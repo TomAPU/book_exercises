@@ -25,24 +25,23 @@ class ReversiGameLogic:
 
         self._finished = False
 
+    def other_player(self, curr_player):
+        return curr_player % 2 + 1
+
     # Returns the player number(1 or 2) for the current player or 0 if no
     # player can move
     def whoseTurn( self ):
         player = self._curr_turn
+        other_player = self.other_player(player)
 
-        for r in range( self._grid.numRows() ):
-            for c in range( self._grid.numCols() ):
-                if self._isLegalMoveFor( r, c, player ):
-                    return player
+        for p in (player, other_player,):
+            for r in range( self._grid.numRows() ):
+                for c in range( self._grid.numCols() ):
+                    if self._legalMoveAttackEndpointsForPlayer(r, c, p,
+                            return_immediately=True):
+                        return p
 
-        # current player can not move
-        other_player = player % 2 + 1
-        for r in range( self._grid.numRows() ):
-            for c in range( self._grid.numCols() ):
-                if self._isLegalMoveFor(r, c, other_player):
-                    self._curr_turn = other_player
-                    return other_player
-
+        # no player can move
         self._finished = True
         return 0
 
@@ -61,9 +60,12 @@ class ReversiGameLogic:
     # Returns the number of squares still open and available for play
     def numOpenSquares( self ):
         n = 0
+        player = self._curr_turn
+        other_player = self.other_player(player)
         for r in range( self._grid.numRows() ):
             for c in range( self._grid.numCols() ):
-                if self.isLegalMove(r, c):
+                if self._legalMoveAttackEndpointsForPlayer(r, c, player) or \
+                        self._legalMoveAttackEndpointsForPlayer(r, c, other_player):
                     n += 1
         return n
 
@@ -85,30 +87,29 @@ class ReversiGameLogic:
     # can place their chip in the square at position (row, col)
     def isLegalMove( self, row, col ):
         player = self._curr_turn
-        return self._isLegalMoveFor( row, col, player )
+        return self._legalMoveAttackEndpointsForPlayer(row, col, player)
 
 
-    def _playerLeagalMoveByDirection(self, row, col, player, direction):
-        name = 'top'
-        iters = itertools.izip(range(row-1-1, -1, -1),
-                itertools.repeat(col))
-        iters = itertools.izip(range(row-1-1, -1, -1),
-                itertools.repeat(col))
-        if self._squareData(row-1, col) == other_player:
-            for r in range(row-2, -1, -1):
-                if self._squareData(r, col) == other_player:
-                    continue
-                elif self._squareData(r, col) == player:
-                    ret.append(('top', r, col))
-                    break
+    def _legalMoveAttackEndpointsForPlayer(self, row, col, player, return_immediately=True):
+        ret = []
+        for direction in ('top', 'top right', 'right', 'bottom right',
+                'bottom', 'bottom left', 'left', 'top left'):
+            endpoint = self._legalMoveAttactEndpointForPlayerByDirection(row, col, player, direction)
+            if endpoint:
+                if return_immediately:
+                    return [endpoint,]
+                else:
+                    ret.append(endpoint)
+        return ret
+
     # The players take turns placing chips on the board with their color facing up. A
     # chip can only be played in a square that is adjacent to a chip of the other player
     # and that forms a straight line of attack 
     # direction:
     #   top, top right, right, bottom right, bottom, bottom left, left, top left
-    def _legalMoveFor( self, row, col, player, direction):
+    def _legalMoveAttactEndpointForPlayerByDirection(self, row, col, player, direction):
         if 0 <= row < GRID_NROWS and 0 <= col < GRID_NCOLS:
-            other_player = player % 2 + 1
+            other_player = self.other_player(player)
             if self._grid[ row, col ] == 0: # is open
                 iters = []
                 if direction == 'top':
@@ -137,8 +138,8 @@ class ReversiGameLogic:
                             itertools.repeat(col))
 
                 elif direction == 'bottom left':
-                    next_cell = (row-1, col-1)
-                    iters = itertools.izip(range(row-1-1, -1, -1),
+                    next_cell = (row+1, col-1)
+                    iters = itertools.izip(range(row+1+1, GRID_NROWS, 1),
                             range(col-1-1, -1, -1))
 
                 elif direction == 'left':
@@ -151,7 +152,7 @@ class ReversiGameLogic:
                     iters = itertools.izip(range(row-1-1, -1, -1),
                             range(col-1-1, -1, -1))
 
-                if self._squareData(row-1, col+1) == other_player:
+                if self._squareData(*next_cell) == other_player:
                     for r, c in iters:
                         if self._squareData(r, c) == other_player:
                             continue
@@ -159,150 +160,10 @@ class ReversiGameLogic:
                             return direction, r, c
         return None
 
-                if self._grid[
-                for r in range(max(row-1,0), min(row+2, GRID_NROWS)):
-                    for c in range(max(col-1, 0), min(col+1, GRID_NCOLS)):
-                        if r == row and c == col:
-                            break
-                        if self._grid[r, c] == other_player:
-                            return True
-
-        # horizontal left,   -->x.....x
-        for c in range( col ):
-            if self._grid[row, c] == player:
-                for c2 in range( c+1, col ):
-                    self._grid[ row, c2 ] = player
-                break
-
-        # horizontal right, x...x<---
-        for c in range( self._grid.numCols() - 1, col, -1 ):
-            if self._grid[row, c] == player:
-                for c2 in range( col+1, c ):
-                    self._grid[ row, c2 ] = player
-                break
-
-        # vertical top
-        #  |
-        #  |
-        #  v
-        #  x
-        #  .
-        #  .
-        #  .
-        #  x
-        for r in range( row ):
-            if self._grid[ r, col ] == player:
-                for r2 in range( r+1, row ):
-                    self._grid[ r2, col ] = player
-                break
-
-        # vertical bottom
-        #  x
-        #  .
-        #  .
-        #  .
-        #  x
-        #  ^
-        #  |
-        #  |
-        for r in range( self._grid.numRows() - 1, row, -1 ):
-            if self._grid[ r, col ] == player:
-                for r2 in range( row+1, r ):
-                    self._grid[ r2, col ] = player
-                break
-
-
-        # diagonal top left
-        # row up, col up
-        # \
-        #  \
-        #   v
-        #    x
-        #     .
-        #      .
-        #       .
-        #        x
-        if row >= col:
-            start_row = row-col
-            for c in range(col):
-                if self._grid[start_row+c, c] == player:
-                    for c2 in range(c+1, col):
-                        self._grid[start_row+c2, c2] = player
-                    break
-        else:
-            start_col = col-row
-            for r in range(row):
-                if self._grid[r, start_col+r] == player:
-                    for r2 in range(r+1, row):
-                        self._grid[r2, start_col+r2] = player
-                    break
-
-        # diagonal  bottom right
-        # 
-        # x
-        #  .
-        #   .
-        #    .
-        #     x
-        #      ^
-        #       \
-        #        \
-        if row >= col:
-            for r in range(self._grid.numRows()-1, row, -1):
-                if self._grid[r, col+(r-row)] == player:
-                    for r2 in range(row+1, r):
-                        self._grid[r2, col+(r2-row)] = player
-                    break
-        else:
-            for c in range(self._grid.numCols()-1, col, -1):
-                if self._grid[row+(c-col), c] == player:
-                    for c2 in range(col+1, c):
-                        self._grid[row+(c2-col), c2] = player
-                    break
-
-        # diagonal  bottom left
-        # col-> +, row -> -
-        #        x
-        #       .
-        #      .
-        #    .
-        #   x
-        #  ^
-        if self._grid.numCols()-col >= row:
-            for r in range(row):
-                if self._grid[r, col+(r-row)] == player:
-                    for r2 in range(r-1, row, -1):
-                        self._grid[r2, col+(r2-row)] = player
-                    break
-        else:
-            for c in range(col):
-                if self._grid[row+(col-c), c] == player:
-                    for c2 in range(c+1, col):
-                        self._grid[row+(col-c2), c2] = player
-                    break
-
-        # diagonal  top right
-        # col-> up, row -> down
-        if self._grid.numCols()-col >= row:
-            for r in range(0, row-1):
-                if self._grid[r, col+(r-row)] == player:
-                    for r2 in range(row-1, r, -1):
-                        self._grid[r2, col+(r2-row)] = player
-                    break
-        else:
-            for c in range(self._grid.numCols()-1, col, -1):
-                if self._grid[row+(col-c), c] == player:
-                    for c2 in range(col+1, c):
-                        self._grid[row+(col-c2), c2] = player
-                    break
-
-
-        return False
-
     def _squareData( self, row, col ):
         if 0 <= row < GRID_NROWS and \
                 0 <= col < GRID_NCOLS:
-            return self._grid[ row, col ]
+            return self._grid[row, col]
         return -1
 
     # Which player has a chip in the given square?
@@ -315,141 +176,53 @@ class ReversiGameLogic:
     # should be flipped based on the rules of Reversi are flipped.
     def makeMove( self, row, col ):
         player = self.whoseTurn()
-        assert self._isLegalMoveFor( row, col, player), "Play %d move to [%d, %d] is illegal." % ( player, row, col )
 
-        other_player = player % 2 + 1
+        if player == 0:
+            print '\nNo player can move, finished'
 
-        # horizontal left,   -->x.....x
-        for c in range( col ):
-            if self._grid[row, c] == player:
-                for c2 in range( c+1, col ):
-                    self._grid[ row, c2 ] = player
-                break
+        attackEndpoints = self._legalMoveAttackEndpointsForPlayer(row, col, player,
+                return_immediately=False)
 
-        # horizontal right, x...x<---
-        for c in range( self._grid.numCols() - 1, col, -1 ):
-            if self._grid[row, c] == player:
-                for c2 in range( col+1, c ):
-                    self._grid[ row, c2 ] = player
-                break
+        for direction, end_row, end_col in attackEndpoints:
+            if direction == 'top':
+                iters = itertools.izip(range(row-1, end_row, -1),
+                        itertools.repeat(col))
 
-        # vertical top
-        #  |
-        #  |
-        #  v
-        #  x
-        #  .
-        #  .
-        #  .
-        #  x
-        for r in range( row ):
-            if self._grid[ r, col ] == player:
-                for r2 in range( r+1, row ):
-                    self._grid[ r2, col ] = player
-                break
+            elif direction == 'top right':
+                iters = itertools.izip(range(row-1, end_row, -1),
+                        range(col+1, end_col, 1))
 
-        # vertical bottom
-        #  x
-        #  .
-        #  .
-        #  .
-        #  x
-        #  ^
-        #  |
-        #  |
-        for r in range( self._grid.numRows() - 1, row, -1 ):
-            if self._grid[ r, col ] == player:
-                for r2 in range( row+1, r ):
-                    self._grid[ r2, col ] = player
-                break
+            elif direction == 'right':
+                iters = itertools.izip(itertools.repeat(row),
+                        range(col+1, end_col, 1))
 
+            elif direction == 'bottom right':
+                iters = itertools.izip(range(row+1, end_row, 1),
+                        range(col+1, end_col, 1))
 
-        # diagonal top left
-        # row up, col up
-        # \
-        #  \
-        #   v
-        #    x
-        #     .
-        #      .
-        #       .
-        #        x
-        if row >= col:
-            start_row = row-col
-            for c in range(col):
-                if self._grid[start_row+c, c] == player:
-                    for c2 in range(c+1, col):
-                        self._grid[start_row+c2, c2] = player
-                    break
-        else:
-            start_col = col-row
-            for r in range(row):
-                if self._grid[r, start_col+r] == player:
-                    for r2 in range(r+1, row):
-                        self._grid[r2, start_col+r2] = player
-                    break
+            elif direction == 'bottom':
+                iters = itertools.izip(range(row+1, end_row, 1),
+                        itertools.repeat(col))
 
-        # diagonal  bottom right
-        # 
-        # x
-        #  .
-        #   .
-        #    .
-        #     x
-        #      ^
-        #       \
-        #        \
-        if row >= col:
-            for r in range(self._grid.numRows()-1, row, -1):
-                if self._grid[r, col+(r-row)] == player:
-                    for r2 in range(row+1, r):
-                        self._grid[r2, col+(r2-row)] = player
-                    break
-        else:
-            for c in range(self._grid.numCols()-1, col, -1):
-                if self._grid[row+(c-col), c] == player:
-                    for c2 in range(col+1, c):
-                        self._grid[row+(c2-col), c2] = player
-                    break
+            elif direction == 'bottom left':
+                iters = itertools.izip(range(row+1, end_row, 1),
+                        range(col-1, end_col, -1))
 
-        # diagonal  bottom left
-        # col-> +, row -> -
-        #        x
-        #       .
-        #      .
-        #    .
-        #   x
-        #  ^
-        if self._grid.numCols()-col >= row:
-            for r in range(row):
-                if self._grid[r, col+(r-row)] == player:
-                    for r2 in range(r-1, row, -1):
-                        self._grid[r2, col+(r2-row)] = player
-                    break
-        else:
-            for c in range(col):
-                if self._grid[row+(col-c), c] == player:
-                    for c2 in range(c+1, col):
-                        self._grid[row+(col-c2), c2] = player
-                    break
+            elif direction == 'left':
+                iters = itertools.izip(itertools.repeat(row),
+                        range(col-1, end_col, -1))
 
-        # diagonal  top right
-        # col-> up, row -> down
-        if self._grid.numCols()-col >= row:
-            for r in range(0, row-1):
-                if self._grid[r, col+(r-row)] == player:
-                    for r2 in range(row-1, r, -1):
-                        self._grid[r2, col+(r2-row)] = player
-                    break
-        else:
-            for c in range(self._grid.numCols()-1, col, -1):
-                if self._grid[row+(col-c), c] == player:
-                    for c2 in range(col+1, c):
-                        self._grid[row+(col-c2), c2] = player
-                    break
+            elif direction == 'top left':
+                iters = itertools.izip(range(row-1, end_row, -1),
+                        range(col-1, end_col, -1))
+
+            for r, c in iters:
+                self._grid[r, c] = player
 
         self._grid[row, col] = player
+        other_player = self.other_player(self._curr_turn)
         self._curr_turn = other_player
+        return
 
     def draw( self ):
         for c in range( self._grid.numCols()+1 ):
@@ -474,21 +247,44 @@ if __name__ == '__main__':
     assert turn == ReversiGameLogic.PLAYER1, "assert turn == ReversiGameLogic.PLAYER1"
 
     """
+    0 1 2 3 4 5 6 7 8
+    1 # # # # # # # #
+    2 # # O O # O # #
+    3 # # O # O # # #
+    4 # # # # # # # #
+    5 # # O # # # # #
+    6 # # O # O O # #
+    7 O # O O O # O #
+    8 # # O O O O O -
+
+
+    for r in range(8):
+        for c in range(8):
+            gl._grid[r,c]=1
+    for r,c in (
+        (1,2),(1,3),(1,5),(2,2),(2,4),(4,2),(5,2),(5,4),(5,5),(6,0),(6,2),(6,3),(6,4),(6,6),(7,2),(7,3),(7,4),(7,5),(7,6)):
+        gl._grid[r,c]=2
+
+    gl._grid[7,7]=0
+    """
+
     while True:
         gl.draw()
 
         turn = gl.whoseTurn()
         if turn == 0:
             win = gl.getWinner()
-            print 'Winner is Player %d' % win+1
+            print 'Winner is Player%d' % win
+            print 'Winner chips: %d' % gl.numChips(win)
+            print 'Other Player chips: %d' % gl.numChips(gl.other_player(win))
             break
 
         if turn == ReversiGameLogic.PLAYER1:
-            play = '#'
+            play = ReversiGameLogic.PLAYER1_CHAR
         else:
-            play = '@'
+            play = ReversiGameLogic.PLAYER2_CHAR
 
-        row_col = raw_input( "Player %c place at(Enter to exit, example row,col): " % play)
+        row_col = raw_input( "Player %s place at(Enter to exit, example row,col): " % play)
         if not row_col:
             exit(0)
         row_col = row_col.split(',')
@@ -499,5 +295,3 @@ if __name__ == '__main__':
             gl.makeMove( row, col )
         else:
             print 'Move illegal, try again'
-
-    """
