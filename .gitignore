@@ -9,3 +9,6 @@ a.out
 
 #to .gitignore file to ignore all directories called node_modules in current folder and any subfolders
 node_modules/
+
+# java class files
+apache_jena/*.class
